@@ -1,0 +1,27 @@
+# robots.txt for DevTools - Developer Utility Suite
+# https://www.robotstxt.org/
+
+User-agent: *
+Allow: /
+Disallow:
+
+# Google
+User-agent: Googlebot
+Allow: /
+
+# Google Images
+User-agent: Googlebot-Image
+Allow: /
+
+# Bing
+User-agent: Bingbot
+Allow: /
+
+# Baidu
+User-agent: Baiduspider
+Allow: /
+
+# 抓取频率（部分爬虫支持，单位：秒）
+Crawl-delay: 1
+
+# Sitemap: https://your-domain.example.com/sitemap.xml
