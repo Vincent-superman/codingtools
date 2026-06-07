@@ -7,6 +7,31 @@
 
   var toolInited = {};
 
+  // i18n shortcut + safe fallback
+  function t(key, params) {
+    if (window.i18n && typeof window.i18n.t === 'function') {
+      return window.i18n.t(key, params);
+    }
+    return key;
+  }
+
+  // Language toggle (top-right)
+  var langToggle = document.getElementById('langToggle');
+  if (langToggle) {
+    langToggle.addEventListener('click', function () {
+      if (!window.i18n) return;
+      window.i18n.setLang(window.i18n.getLang() === 'zh' ? 'en' : 'zh');
+    });
+  }
+
+  // Re-render handlers registered by individual tools so dynamic content
+  // (toasts excluded — they're transient) refreshes when language changes.
+  var rerenderers = [];
+  function onLangChange(fn) { rerenderers.push(fn); }
+  document.addEventListener('i18n:change', function () {
+    rerenderers.forEach(function (fn) { try { fn(); } catch (e) {} });
+  });
+
   // ============================================================
   // ROUTING
   // ============================================================
@@ -87,9 +112,10 @@
   // ============================================================
 
   function copyToClipboard(text, label) {
-    if (!text) { showToast('没有可复制的内容', 'error'); return; }
+    if (!text) { showToast(t('common.copyEmpty'), 'error'); return; }
+    var msg = t('common.copySuccess', { label: label || t('copy.content') });
     navigator.clipboard.writeText(text).then(function () {
-      showToast((label || '内容') + ' 已复制到剪贴板', 'success');
+      showToast(msg, 'success');
     }).catch(function () {
       // Fallback
       var ta = document.createElement('textarea');
@@ -100,7 +126,7 @@
       ta.select();
       document.execCommand('copy');
       ta.remove();
-      showToast((label || '内容') + ' 已复制到剪贴板', 'success');
+      showToast(msg, 'success');
     });
   }
 
@@ -115,6 +141,7 @@
     switch (name) {
       case 'json-formatter': initJsonFormatter(); break;
       case 'json-convert': initJsonConvert(); break;
+      case 'json-diff': initJsonDiff(); break;
       case 'yaml-json': initYamlJson(); break;
       case 'xml-json': initXmlJson(); break;
       case 'sql-format': initSqlFormat(); break;
@@ -154,6 +181,7 @@
     var input = document.getElementById('jsonInput');
     var output = document.getElementById('jsonOutput');
     var stats = document.getElementById('jsonStats');
+    var lastObj = null;
 
     document.getElementById('jsonFormat').addEventListener('click', function () {
       try {
@@ -162,11 +190,12 @@
         output.className = 'result-area json-tree';
         output.textContent = formatted;
         highlightJson(output);
+        lastObj = obj;
         updateJsonStats(obj);
         stats.style.display = 'flex';
       } catch (e) {
         output.className = 'result-area';
-        output.textContent = 'JSON 解析错误: ' + e.message;
+        output.textContent = t('jf.err.parse', { msg: e.message });
         output.style.color = 'var(--accent-red)';
         stats.style.display = 'none';
       }
@@ -179,11 +208,12 @@
         output.className = 'result-area';
         output.textContent = compressed;
         output.style.color = 'var(--text-primary)';
+        lastObj = obj;
         updateJsonStats(obj);
         stats.style.display = 'flex';
       } catch (e) {
         output.className = 'result-area';
-        output.textContent = 'JSON 解析错误: ' + e.message;
+        output.textContent = t('jf.err.parse', { msg: e.message });
         output.style.color = 'var(--accent-red)';
         stats.style.display = 'none';
       }
@@ -193,13 +223,14 @@
       try {
         var obj = JSON.parse(input.value);
         output.className = 'result-area';
-        output.innerHTML = '<span style="color:var(--accent-green);">✓ 有效的 JSON</span>';
+        output.innerHTML = '<span style="color:var(--accent-green);">' + escapeHtml(t('jf.valid')) + '</span>';
         output.style.color = '';
+        lastObj = obj;
         updateJsonStats(obj);
         stats.style.display = 'flex';
       } catch (e) {
         output.className = 'result-area';
-        output.innerHTML = '<span style="color:var(--accent-red);">✗ 无效的 JSON: ' + escapeHtml(e.message) + '</span>';
+        output.innerHTML = '<span style="color:var(--accent-red);">' + escapeHtml(t('jf.invalid', { msg: e.message })) + '</span>';
         output.style.color = '';
         stats.style.display = 'none';
       }
@@ -208,22 +239,27 @@
     document.getElementById('jsonClear').addEventListener('click', function () {
       input.value = '';
       output.className = 'result-area empty';
-      output.textContent = '等待输入...';
+      output.textContent = t('common.waiting');
       output.style.color = '';
       stats.style.display = 'none';
+      lastObj = null;
     });
 
     document.getElementById('jsonCopy').addEventListener('click', function () {
-      copyToClipboard(output.textContent, 'JSON');
+      copyToClipboard(output.textContent, t('copy.json'));
     });
 
     function updateJsonStats(obj) {
       var text = JSON.stringify(obj);
       stats.innerHTML =
-        '<span>类型: ' + (Array.isArray(obj) ? 'Array' : typeof obj) + '</span>' +
-        '<span>大小: ' + (new Blob([text]).size) + ' bytes</span>' +
-        '<span>字符数: ' + text.length + '</span>';
+        '<span>' + escapeHtml(t('jf.stats.type', { type: Array.isArray(obj) ? 'Array' : typeof obj })) + '</span>' +
+        '<span>' + escapeHtml(t('jf.stats.size', { size: new Blob([text]).size })) + '</span>' +
+        '<span>' + escapeHtml(t('jf.stats.chars', { n: text.length })) + '</span>';
     }
+
+    onLangChange(function () {
+      if (lastObj !== null && stats.style.display !== 'none') updateJsonStats(lastObj);
+    });
   }
 
   function escapeHtml(str) {
@@ -267,9 +303,9 @@
       try {
         var obj = (new Function('return (' + objInput.value + ')'))();
         strInput.value = JSON.stringify(obj, null, 2);
-        showToast('序列化成功', 'success');
+        showToast(t('jc.toast.serialized'), 'success');
       } catch (e) {
-        strInput.value = '错误: ' + e.message;
+        strInput.value = t('jc.err.generic', { msg: e.message });
       }
     });
 
@@ -281,9 +317,9 @@
       try {
         var obj = JSON.parse(strInput.value);
         objInput.value = JSON.stringify(obj, null, 2);
-        showToast('反序列化成功', 'success');
+        showToast(t('jc.toast.deserialized'), 'success');
       } catch (e) {
-        objInput.value = '错误: ' + e.message;
+        objInput.value = t('jc.err.generic', { msg: e.message });
       }
     });
 
@@ -293,10 +329,309 @@
       } catch (e) {
         var s = strInput.value;
         try { objInput.value = JSON.parse(s); } catch (e2) {
-          objInput.value = '错误: 无法反转义';
+          objInput.value = t('jc.err.unescape');
         }
       }
     });
+  }
+
+  // ============================================================
+  // JSON DIFF (Content Compare)
+  // ============================================================
+
+  function initJsonDiff() {
+    var leftEl = document.getElementById('jdLeft');
+    var rightEl = document.getElementById('jdRight');
+    var output = document.getElementById('jdOutput');
+    var summary = document.getElementById('jdSummary');
+    var error = document.getElementById('jdError');
+    var optionsGroup = document.getElementById('jdOptionsGroup');
+    var sortKeysCb = document.getElementById('jdSortKeys');
+    var currentMode = 'structural';
+    var lastResult = null;
+
+    document.querySelectorAll('.jd-mode').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.jd-mode').forEach(function (b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        currentMode = this.getAttribute('data-mode');
+        optionsGroup.style.display = currentMode === 'structural' ? '' : 'none';
+        if (lastResult) {
+          lastResult.mode = currentMode;
+          render();
+        }
+      });
+    });
+
+    document.getElementById('jdCompare').addEventListener('click', runCompare);
+    sortKeysCb.addEventListener('change', function () {
+      if (lastResult) {
+        lastResult.sortKeys = sortKeysCb.checked;
+        render();
+      }
+    });
+    document.getElementById('jdSwap').addEventListener('click', function () {
+      var tmp = leftEl.value;
+      leftEl.value = rightEl.value;
+      rightEl.value = tmp;
+      if (lastResult) runCompare();
+    });
+    document.getElementById('jdClear').addEventListener('click', function () {
+      leftEl.value = '';
+      rightEl.value = '';
+      output.className = 'result-area empty';
+      output.textContent = t('jd.placeholder.result');
+      summary.style.display = 'none';
+      error.style.display = 'none';
+      lastResult = null;
+    });
+
+    function runCompare() {
+      error.style.display = 'none';
+      var leftRaw = leftEl.value.trim();
+      var rightRaw = rightEl.value.trim();
+
+      if (!leftRaw || !rightRaw) {
+        error.textContent = t('jd.err.empty');
+        error.style.display = 'block';
+        return;
+      }
+
+      var left, right;
+      try { left = JSON.parse(leftRaw); }
+      catch (e) {
+        error.textContent = t('jd.err.parseLeft', { msg: e.message });
+        error.style.display = 'block';
+        return;
+      }
+      try { right = JSON.parse(rightRaw); }
+      catch (e) {
+        error.textContent = t('jd.err.parseRight', { msg: e.message });
+        error.style.display = 'block';
+        return;
+      }
+
+      lastResult = { left: left, right: right, mode: currentMode, sortKeys: sortKeysCb.checked };
+      render();
+    }
+
+    function render() {
+      if (!lastResult) return;
+      var left = lastResult.left, right = lastResult.right;
+
+      if (lastResult.mode === 'structural') {
+        var counts = { added: 0, removed: 0, changed: 0, unchanged: 0 };
+        var html = renderStructuralRoot(left, right, lastResult.sortKeys, counts);
+        output.className = 'result-area';
+        output.style.padding = '0';
+        output.innerHTML = '<div class="jd-tree">' + html + '</div>';
+        renderSummary(counts);
+      } else {
+        var leftStr = JSON.stringify(left, null, 2);
+        var rightStr = JSON.stringify(right, null, 2);
+        var changes = Diff.diffLines(leftStr, rightStr);
+        var added = 0, removed = 0;
+        var lines = '';
+        for (var i = 0; i < changes.length; i++) {
+          var ch = changes[i];
+          var text = escapeHtml(ch.value).replace(/\n$/, '');
+          if (ch.added) {
+            lines += '<div class="diff-line diff-added">+ ' + text + '</div>';
+            added += ch.count || (ch.value.match(/\n/g) || []).length;
+          } else if (ch.removed) {
+            lines += '<div class="diff-line diff-removed">- ' + text + '</div>';
+            removed += ch.count || (ch.value.match(/\n/g) || []).length;
+          } else {
+            lines += '<div class="diff-line">  ' + text + '</div>';
+          }
+        }
+        output.className = 'result-area';
+        output.style.padding = '0';
+        output.innerHTML = lines || '<div class="diff-line">' + escapeHtml(t('jd.same')) + '</div>';
+        renderSummary({ added: added, removed: removed, changed: 0, unchanged: 0 }, true);
+      }
+    }
+
+    function renderSummary(counts, lineMode) {
+      var parts = [];
+      parts.push('<span class="jd-chip jd-chip-added">+ ' + escapeHtml(t('jd.sum.added', { n: counts.added })) + '</span>');
+      parts.push('<span class="jd-chip jd-chip-removed">- ' + escapeHtml(t('jd.sum.removed', { n: counts.removed })) + '</span>');
+      if (!lineMode) {
+        parts.push('<span class="jd-chip jd-chip-changed">~ ' + escapeHtml(t('jd.sum.changed', { n: counts.changed })) + '</span>');
+        parts.push('<span class="jd-chip jd-chip-unchanged">= ' + escapeHtml(t('jd.sum.unchanged', { n: counts.unchanged })) + '</span>');
+      }
+      summary.innerHTML = parts.join('');
+      summary.style.display = '';
+    }
+
+    onLangChange(function () {
+      if (lastResult) render();
+      else if (output.classList.contains('empty')) output.textContent = t('jd.placeholder.result');
+    });
+  }
+
+  // Render the structural diff tree starting at the root pair.
+  // Emits HTML that visualises both objects/arrays as a single aligned tree,
+  // marking added (+), removed (-), and changed (-/+ pair) entries.
+  function renderStructuralRoot(left, right, sortKeys, counts) {
+    var lt = jsonType(left), rt = jsonType(right);
+
+    if (lt === 'object' && rt === 'object') {
+      return jdRow(0, '', '{', null) + jdObjectBody(left, right, 1, sortKeys, counts) + jdRow(0, '', '}', null);
+    }
+    if (lt === 'array' && rt === 'array') {
+      return jdRow(0, '', '[', null) + jdArrayBody(left, right, 1, sortKeys, counts) + jdRow(0, '', ']', null);
+    }
+    if (deepEqual(left, right)) {
+      counts.unchanged++;
+      return jdRow(0, '', renderValueInline(left), null);
+    }
+    counts.changed++;
+    return jdRow(0, '', renderValueInline(left), 'removed') + jdRow(0, '', renderValueInline(right), 'added');
+  }
+
+  function jdObjectBody(left, right, depth, sortKeys, counts) {
+    var keys = mergeKeys(Object.keys(left), Object.keys(right), sortKeys);
+    var out = '';
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i];
+      var hasL = Object.prototype.hasOwnProperty.call(left, k);
+      var hasR = Object.prototype.hasOwnProperty.call(right, k);
+      var keyHtml = '<span class="jd-key">' + escapeHtml(JSON.stringify(k)) + '</span>: ';
+      var sep = (i < keys.length - 1) ? ',' : '';
+
+      if (hasL && !hasR) {
+        out += jdRow(depth, '-', keyHtml + renderValueInline(left[k]) + sep, 'removed');
+        countLeaves(left[k], counts, 'removed');
+      } else if (!hasL && hasR) {
+        out += jdRow(depth, '+', keyHtml + renderValueInline(right[k]) + sep, 'added');
+        countLeaves(right[k], counts, 'added');
+      } else {
+        out += jdComparePair(left[k], right[k], depth, keyHtml, sep, sortKeys, counts);
+      }
+    }
+    return out;
+  }
+
+  function jdArrayBody(left, right, depth, sortKeys, counts) {
+    var max = Math.max(left.length, right.length);
+    var out = '';
+    for (var i = 0; i < max; i++) {
+      var hasL = i < left.length;
+      var hasR = i < right.length;
+      var idxHtml = '<span class="jd-index">[' + i + ']</span> ';
+      var sep = (i < max - 1) ? ',' : '';
+      if (hasL && !hasR) {
+        out += jdRow(depth, '-', idxHtml + renderValueInline(left[i]) + sep, 'removed');
+        countLeaves(left[i], counts, 'removed');
+      } else if (!hasL && hasR) {
+        out += jdRow(depth, '+', idxHtml + renderValueInline(right[i]) + sep, 'added');
+        countLeaves(right[i], counts, 'added');
+      } else {
+        out += jdComparePair(left[i], right[i], depth, idxHtml, sep, sortKeys, counts);
+      }
+    }
+    return out;
+  }
+
+  function jdComparePair(lv, rv, depth, prefix, sep, sortKeys, counts) {
+    var lvt = jsonType(lv), rvt = jsonType(rv);
+    if (lvt === 'object' && rvt === 'object') {
+      return jdRow(depth, '', prefix + '{', null)
+        + jdObjectBody(lv, rv, depth + 1, sortKeys, counts)
+        + jdRow(depth, '', '}' + sep, null);
+    }
+    if (lvt === 'array' && rvt === 'array') {
+      return jdRow(depth, '', prefix + '[', null)
+        + jdArrayBody(lv, rv, depth + 1, sortKeys, counts)
+        + jdRow(depth, '', ']' + sep, null);
+    }
+    if (deepEqual(lv, rv)) {
+      counts.unchanged++;
+      return jdRow(depth, '', prefix + renderValueInline(lv) + sep, null);
+    }
+    counts.changed++;
+    return jdRow(depth, '-', prefix + renderValueInline(lv) + sep, 'removed')
+      + jdRow(depth, '+', prefix + renderValueInline(rv) + sep, 'added');
+  }
+
+  function jdRow(depth, marker, content, kind) {
+    var pad = depth * 18;
+    var cls = 'jd-row' + (kind ? ' jd-row-' + kind : '');
+    var m = '<span class="jd-marker">' + (marker || '&nbsp;') + '</span>';
+    return '<div class="' + cls + '" style="padding-left:' + pad + 'px;">' + m + content + '</div>';
+  }
+
+  function jsonType(v) {
+    if (v === null) return 'null';
+    if (Array.isArray(v)) return 'array';
+    return typeof v;
+  }
+
+  function mergeKeys(a, b, sortKeys) {
+    var seen = {};
+    var out = [];
+    function add(arr) {
+      for (var i = 0; i < arr.length; i++) {
+        if (!Object.prototype.hasOwnProperty.call(seen, arr[i])) {
+          seen[arr[i]] = true;
+          out.push(arr[i]);
+        }
+      }
+    }
+    add(a); add(b);
+    if (sortKeys) out.sort();
+    return out;
+  }
+
+  function deepEqual(a, b) {
+    if (a === b) return true;
+    var ta = jsonType(a), tb = jsonType(b);
+    if (ta !== tb) return false;
+    if (ta === 'array') {
+      if (a.length !== b.length) return false;
+      for (var i = 0; i < a.length; i++) if (!deepEqual(a[i], b[i])) return false;
+      return true;
+    }
+    if (ta === 'object') {
+      var ka = Object.keys(a), kb = Object.keys(b);
+      if (ka.length !== kb.length) return false;
+      for (var j = 0; j < ka.length; j++) {
+        if (!Object.prototype.hasOwnProperty.call(b, ka[j])) return false;
+        if (!deepEqual(a[ka[j]], b[ka[j]])) return false;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  function renderValueInline(v) {
+    var ty = jsonType(v);
+    if (ty === 'string') return '<span class="json-string">' + escapeHtml(JSON.stringify(v)) + '</span>';
+    if (ty === 'number') return '<span class="json-number">' + escapeHtml(String(v)) + '</span>';
+    if (ty === 'boolean') return '<span class="json-boolean">' + String(v) + '</span>';
+    if (ty === 'null') return '<span class="json-null">null</span>';
+    if (ty === 'array') {
+      if (v.length === 0) return '[]';
+      return escapeHtml(JSON.stringify(v));
+    }
+    if (ty === 'object') {
+      if (Object.keys(v).length === 0) return '{}';
+      return escapeHtml(JSON.stringify(v));
+    }
+    return escapeHtml(String(v));
+  }
+
+  function countLeaves(v, counts, kind) {
+    var ty = jsonType(v);
+    if (ty === 'array') {
+      for (var i = 0; i < v.length; i++) countLeaves(v[i], counts, kind);
+    } else if (ty === 'object') {
+      var ks = Object.keys(v);
+      for (var j = 0; j < ks.length; j++) countLeaves(v[ks[j]], counts, kind);
+    } else {
+      counts[kind]++;
+    }
   }
 
   // ============================================================
@@ -323,11 +658,11 @@
     });
 
     document.getElementById('base64Copy').addEventListener('click', function () {
-      copyToClipboard(output.value, 'Base64');
+      copyToClipboard(output.value, t('copy.b64'));
     });
 
     document.getElementById('base64Download').addEventListener('click', function () {
-      if (!output.value) { showToast('请先选择图片', 'error'); return; }
+      if (!output.value) { showToast(t('b64i.toast.noImage'), 'error'); return; }
       var blob = new Blob([output.value], { type: 'text/plain' });
       downloadBlob(blob, 'base64-image.txt');
     });
@@ -347,11 +682,11 @@
     document.getElementById('base64DecodeBtn').addEventListener('click', function () {
       error.style.display = 'none';
       actions.style.display = 'none';
-      preview.innerHTML = '<span style="color:var(--text-tertiary);">还原后的图片将显示在此处</span>';
+      preview.innerHTML = '<span style="color:var(--text-tertiary);">' + escapeHtml(t('b64d.preview')) + '</span>';
 
       var val = input.value.trim();
       if (!val) {
-        error.textContent = '请输入 Base64 字符串';
+        error.textContent = t('b64d.err.empty');
         error.style.display = 'block';
         return;
       }
@@ -371,19 +706,20 @@
       // Clean the string - extract just the base64 portion
       var match = src.match(/^data:image\/\w+;base64,(.+)$/i);
       if (!match) {
-        error.textContent = '无效的 Base64 图片格式';
+        error.textContent = t('b64d.err.invalid');
         error.style.display = 'block';
         return;
       }
 
       currentSrc = src;
-      preview.innerHTML = '<img src="' + src + '" alt="Decoded" style="max-width:100%;max-height:400px;border-radius:8px;" onerror="this.onerror=null;this.parentElement.innerHTML=\'<span style=color:var(--accent-red);>无法渲染图片，请检查 Base64 字符串</span>\';">';
+      var renderErr = t('b64d.err.render').replace(/'/g, '&#39;');
+      preview.innerHTML = '<img src="' + src + '" alt="Decoded" style="max-width:100%;max-height:400px;border-radius:8px;" onerror="this.onerror=null;this.parentElement.innerHTML=\'<span style=color:var(--accent-red);>' + renderErr + '</span>\';">';
       actions.style.display = 'flex';
     });
 
     document.getElementById('base64DecodeClear').addEventListener('click', function () {
       input.value = '';
-      preview.innerHTML = '<span style="color:var(--text-tertiary);">还原后的图片将显示在此处</span>';
+      preview.innerHTML = '<span style="color:var(--text-tertiary);">' + escapeHtml(t('b64d.preview')) + '</span>';
       actions.style.display = 'none';
       error.style.display = 'none';
       currentSrc = null;
@@ -424,7 +760,7 @@
       var fg = document.getElementById('qrFg').value;
       var bg = document.getElementById('qrBg').value;
 
-      if (!text) { showToast('请输入文本或链接', 'error'); return; }
+      if (!text) { showToast(t('qr.toast.empty'), 'error'); return; }
 
       container.innerHTML = '';
       actions.style.display = 'none';
@@ -436,7 +772,7 @@
         color: { dark: fg, light: bg }
       }, function (err) {
         if (err) {
-          container.innerHTML = '<span style="color:var(--accent-red);">生成失败: ' + err.message + '</span>';
+          container.innerHTML = '<span style="color:var(--accent-red);">' + escapeHtml(t('qr.err.fail', { msg: err.message })) + '</span>';
           return;
         }
         container.appendChild(canvas);
@@ -503,10 +839,10 @@
       var code = jsQR(imageData.data, canvas.width, canvas.height);
       if (code) {
         result.value = code.data;
-        showToast('解码成功', 'success');
+        showToast(t('qrd.toast.success'), 'success');
       } else {
         result.value = '';
-        showToast('未检测到二维码，请确认图片清晰度', 'error');
+        showToast(t('qrd.toast.notFound'), 'error');
       }
     }
 
@@ -524,11 +860,11 @@
 
     document.getElementById('qrDecodeUrlBtn').addEventListener('click', function () {
       var url = urlInput.value.trim();
-      if (!url) { showToast('请输入图片 URL', 'error'); return; }
+      if (!url) { showToast(t('qrd.toast.urlEmpty'), 'error'); return; }
       var img = new Image();
       img.crossOrigin = 'anonymous';
       img.onload = function () { decodeImage(img); };
-      img.onerror = function () { showToast('加载图片失败，请检查 URL', 'error'); };
+      img.onerror = function () { showToast(t('qrd.toast.loadFail'), 'error'); };
       img.src = url;
     });
   }
@@ -545,7 +881,7 @@
       try {
         encoded.value = encodeURIComponent(raw.value);
       } catch (e) {
-        encoded.value = '编码错误: ' + e.message;
+        encoded.value = t('url.err.encode', { msg: e.message });
       }
     });
 
@@ -553,7 +889,7 @@
       try {
         raw.value = decodeURIComponent(encoded.value);
       } catch (e) {
-        raw.value = '解码错误: ' + e.message;
+        raw.value = t('url.err.decode', { msg: e.message });
       }
     });
   }
@@ -606,7 +942,7 @@
           return String.fromCharCode(parseInt(hex, 16));
         });
       } catch (e) {
-        raw.value = '解码错误: ' + e.message;
+        raw.value = t('uni.err.decode', { msg: e.message });
       }
     });
   }
@@ -654,7 +990,7 @@
     });
 
     document.getElementById('uuidCopy').addEventListener('click', function () {
-      copyToClipboard(output.textContent, 'UUID');
+      copyToClipboard(output.textContent, t('copy.uuid'));
     });
   }
 
@@ -678,7 +1014,7 @@
     function compute() {
       var val = input.value;
       if (!val) {
-        output.textContent = '等待输入...';
+        output.textContent = t('common.waiting');
         return;
       }
       var hash = algoMap[currentAlgo](val).toString();
@@ -698,7 +1034,11 @@
     });
 
     document.getElementById('hashCopy').addEventListener('click', function () {
-      copyToClipboard(output.textContent, 'Hash');
+      copyToClipboard(output.textContent, t('copy.hash'));
+    });
+
+    onLangChange(function () {
+      if (!input.value) output.textContent = t('common.waiting');
     });
   }
 
@@ -711,10 +1051,22 @@
     var lenVal = document.getElementById('pwdLenVal');
     var output = document.getElementById('pwdOutput');
     var strength = document.getElementById('pwdStrength');
+    var lastBits = null;
 
     lenEl.addEventListener('input', function () {
       lenVal.textContent = this.value;
     });
+
+    function renderStrength(bits) {
+      var levelKey, color;
+      if (bits < 40) { levelKey = 'pwd.level.weak'; color = 'var(--accent-red)'; }
+      else if (bits < 80) { levelKey = 'pwd.level.medium'; color = 'var(--accent-orange)'; }
+      else if (bits < 120) { levelKey = 'pwd.level.strong'; color = 'var(--accent-green)'; }
+      else { levelKey = 'pwd.level.veryStrong'; color = 'var(--accent-cyan)'; }
+      strength.innerHTML =
+        '<span>' + escapeHtml(t('pwd.entropy', { n: Math.round(bits) })) + '</span>' +
+        '<span style="color:' + color + ';">' + escapeHtml(t('pwd.strength', { level: t(levelKey) })) + '</span>';
+    }
 
     document.getElementById('pwdGenerate').addEventListener('click', function () {
       var len = parseInt(lenEl.value);
@@ -724,7 +1076,7 @@
       if (document.getElementById('pwdDigits').checked) chars += '0123456789';
       if (document.getElementById('pwdSymbols').checked) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
 
-      if (!chars) { showToast('请至少选择一种字符集', 'error'); return; }
+      if (!chars) { showToast(t('pwd.toast.charset'), 'error'); return; }
 
       var array = new Uint32Array(len);
       crypto.getRandomValues(array);
@@ -738,16 +1090,16 @@
       // Strength assessment
       var entropy = chars.length;
       var bits = Math.log2(Math.pow(entropy, len));
-      var level, color;
-      if (bits < 40) { level = '弱'; color = 'var(--accent-red)'; }
-      else if (bits < 80) { level = '中等'; color = 'var(--accent-orange)'; }
-      else if (bits < 120) { level = '强'; color = 'var(--accent-green)'; }
-      else { level = '非常强'; color = 'var(--accent-cyan)'; }
-      strength.innerHTML = '<span>熵值: ' + Math.round(bits) + ' bits</span><span style="color:' + color + ';">强度: ' + level + '</span>';
+      lastBits = bits;
+      renderStrength(bits);
     });
 
     document.getElementById('pwdCopy').addEventListener('click', function () {
-      copyToClipboard(output.value, '密码');
+      copyToClipboard(output.value, t('copy.password'));
+    });
+
+    onLangChange(function () {
+      if (lastBits !== null) renderStrength(lastBits);
     });
   }
 
@@ -768,7 +1120,7 @@
 
       if (!pattern) {
         resultEl.className = 'result-area empty';
-        resultEl.innerHTML = '输入正则和文本后自动匹配...';
+        resultEl.textContent = t('rx.placeholder.result');
         return;
       }
 
@@ -809,7 +1161,7 @@
 
         resultEl.className = 'result-area';
         if (matches.length === 0) {
-          resultEl.innerHTML = '<span style="color:var(--text-secondary);">未找到匹配</span>';
+          resultEl.innerHTML = '<span style="color:var(--text-secondary);">' + escapeHtml(t('rx.noMatch')) + '</span>';
         } else {
           // Highlight matches in text
           var highlighted = '';
@@ -837,22 +1189,24 @@
           resultEl.innerHTML = highlighted;
 
           resultEl.innerHTML += '<hr style="border-color:var(--border-primary);margin:12px 0;">';
-          resultEl.innerHTML += '<div style="color:var(--text-secondary);font-size:12px;">找到 ' + matches.length + ' 个匹配</div>';
+          resultEl.innerHTML += '<div style="color:var(--text-secondary);font-size:12px;">' + escapeHtml(t('rx.found', { n: matches.length })) + '</div>';
           if (matches.length <= 20) {
             for (var i = 0; i < matches.length; i++) {
-              resultEl.innerHTML += '<div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">[' + i + '] 位置 ' + matches[i].index + ': "' + escapeHtml(matches[i].text) + '"</div>';
+              resultEl.innerHTML += '<div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">' + escapeHtml(t('rx.matchItem', { i: i, pos: matches[i].index, text: matches[i].text })) + '</div>';
             }
           }
         }
       } catch (e) {
         resultEl.className = 'result-area';
-        resultEl.innerHTML = '<span style="color:var(--accent-red);">正则错误: ' + escapeHtml(e.message) + '</span>';
+        resultEl.innerHTML = '<span style="color:var(--accent-red);">' + escapeHtml(t('rx.err', { msg: e.message })) + '</span>';
       }
     }
 
     patternEl.addEventListener('input', test);
     flagsEl.addEventListener('change', test);
     textEl.addEventListener('input', test);
+
+    onLangChange(test);
   }
 
   // ============================================================
@@ -860,14 +1214,13 @@
   // ============================================================
 
   function initTextDiff() {
-    document.getElementById('diffCompare').addEventListener('click', function () {
-      var oldText = document.getElementById('diffOld').value;
-      var newText = document.getElementById('diffNew').value;
-      var output = document.getElementById('diffOutput');
+    var output = document.getElementById('diffOutput');
+    var lastResult = null;
 
+    function render(oldText, newText) {
       if (!oldText && !newText) {
         output.className = 'result-area empty';
-        output.textContent = '请输入文本后再对比...';
+        output.textContent = t('diff.empty');
         return;
       }
 
@@ -896,8 +1249,21 @@
       var summary = document.createElement('div');
       summary.className = 'stats-bar';
       summary.style.padding = '8px 10px';
-      summary.innerHTML = '<span style="color:var(--accent-green);">+ ' + addedCount + ' additions</span><span style="color:var(--accent-red);">- ' + removedCount + ' deletions</span>';
+      summary.innerHTML =
+        '<span style="color:var(--accent-green);">' + escapeHtml(t('diff.added', { n: addedCount })) + '</span>' +
+        '<span style="color:var(--accent-red);">' + escapeHtml(t('diff.removed', { n: removedCount })) + '</span>';
       output.insertBefore(summary, output.firstChild);
+    }
+
+    document.getElementById('diffCompare').addEventListener('click', function () {
+      var oldText = document.getElementById('diffOld').value;
+      var newText = document.getElementById('diffNew').value;
+      lastResult = { oldText: oldText, newText: newText };
+      render(oldText, newText);
+    });
+
+    onLangChange(function () {
+      if (lastResult) render(lastResult.oldText, lastResult.newText);
     });
   }
 
@@ -920,7 +1286,7 @@
         preview.innerHTML = html;
         preview.style.color = 'var(--text-primary)';
       } catch (e) {
-        preview.innerHTML = '<span style="color:var(--accent-red);">渲染错误: ' + escapeHtml(e.message) + '</span>';
+        preview.innerHTML = '<span style="color:var(--accent-red);">' + escapeHtml(t('md.err.render', { msg: e.message })) + '</span>';
       }
     });
   }
@@ -954,7 +1320,7 @@
       var val = input.value;
       if (!val) {
         output.className = 'result-area empty';
-        output.textContent = '等待输入...';
+        output.textContent = t('common.waiting');
         return;
       }
       output.className = 'result-area';
@@ -973,8 +1339,10 @@
     });
 
     document.getElementById('caseCopy').addEventListener('click', function () {
-      copyToClipboard(output.textContent, '转换结果');
+      copyToClipboard(output.textContent, t('copy.case'));
     });
+
+    onLangChange(doConvert);
   }
 
   // ============================================================
@@ -986,6 +1354,7 @@
     var tsResult = document.getElementById('tsResult');
     var tsDateInput = document.getElementById('tsDateInput');
     var tsDateResult = document.getElementById('tsDateResult');
+    var lastLeft = null, lastRight = null;
 
     function formatDate(d) {
       return d.getFullYear() + '-' +
@@ -997,53 +1366,74 @@
         String(d.getMilliseconds()).padStart(3, '0');
     }
 
+    function renderLeft(state) {
+      lastLeft = state;
+      if (!state) return;
+      if (state.kind === 'err') { tsResult.textContent = t(state.key); return; }
+      if (state.kind === 'now') {
+        tsResult.innerHTML =
+          '<div>' + escapeHtml(t('ts.nowSec')) + ': <strong>' + Math.floor(state.now / 1000) + '</strong></div>' +
+          '<div>' + escapeHtml(t('ts.nowMs')) + ': <strong>' + state.now + '</strong></div>';
+        return;
+      }
+      var d = new Date(state.ts);
+      tsResult.innerHTML =
+        '<div>' + escapeHtml(t('ts.local')) + ': <strong>' + formatDate(d) + '</strong></div>' +
+        '<div>' + escapeHtml(t('ts.utc')) + ': <strong>' + d.toISOString() + '</strong></div>' +
+        '<div>' + escapeHtml(t('ts.weekday')) + ': ' + escapeHtml(t('ts.weekdayShort.' + d.getDay())) + '</div>' +
+        '<div>' + escapeHtml(t('ts.unixSec')) + ': ' + Math.floor(state.ts / 1000) + '</div>' +
+        '<div>' + escapeHtml(t('ts.unixMs')) + ': ' + state.ts + '</div>';
+    }
+
+    function renderRight(state) {
+      lastRight = state;
+      if (!state) return;
+      if (state.kind === 'err') { tsDateResult.textContent = t(state.key); return; }
+      var d = new Date(state.ms);
+      tsDateResult.innerHTML =
+        '<div>' + escapeHtml(t('ts.unixSec')) + ': <strong>' + Math.floor(state.ms / 1000) + '</strong></div>' +
+        '<div>' + escapeHtml(t('ts.unixMs')) + ': <strong>' + state.ms + '</strong></div>' +
+        '<div>ISO: ' + d.toISOString() + '</div>';
+    }
+
     document.getElementById('tsConvert').addEventListener('click', function () {
       var val = tsInput.value.trim();
-      if (!val) { tsResult.textContent = '请输入时间戳'; return; }
+      if (!val) { renderLeft({ kind: 'err', key: 'ts.err.empty' }); return; }
       var ts = parseInt(val);
-      if (isNaN(ts)) { tsResult.textContent = '无效的时间戳'; return; }
+      if (isNaN(ts)) { renderLeft({ kind: 'err', key: 'ts.err.invalid' }); return; }
 
       // Autodetect seconds vs milliseconds
-      if (ts > 1e12) ts = Math.floor(ts); // already ms
-      else if (ts < 1e10) ts = ts * 1000; // seconds to ms
-      // Between 1e10 and 1e12 is milliseconds range
+      if (ts > 1e12) ts = Math.floor(ts);
+      else if (ts < 1e10) ts = ts * 1000;
 
       var d = new Date(ts);
-      if (isNaN(d.getTime())) { tsResult.textContent = '无效的时间戳'; return; }
+      if (isNaN(d.getTime())) { renderLeft({ kind: 'err', key: 'ts.err.invalid' }); return; }
 
-      tsResult.innerHTML =
-        '<div>本地时间: <strong>' + formatDate(d) + '</strong></div>' +
-        '<div>UTC 时间: <strong>' + d.toISOString() + '</strong></div>' +
-        '<div>星期: ' + ['日','一','二','三','四','五','六'][d.getDay()] + '</div>' +
-        '<div>Unix 秒: ' + Math.floor(ts / 1000) + '</div>' +
-        '<div>Unix 毫秒: ' + ts + '</div>';
+      renderLeft({ kind: 'ts', ts: ts });
     });
 
     document.getElementById('tsNow').addEventListener('click', function () {
       var now = Date.now();
       tsInput.value = now;
-      tsResult.innerHTML =
-        '<div>当前 Unix 秒: <strong>' + Math.floor(now / 1000) + '</strong></div>' +
-        '<div>当前 Unix 毫秒: <strong>' + now + '</strong></div>';
+      renderLeft({ kind: 'now', now: now });
     });
 
     document.getElementById('tsDateConvert').addEventListener('click', function () {
       var val = tsDateInput.value.trim();
-      if (!val) { tsDateResult.textContent = '请输入日期'; return; }
+      if (!val) { renderRight({ kind: 'err', key: 'ts.err.dateEmpty' }); return; }
       var d = new Date(val);
       if (isNaN(d.getTime())) {
-        // Try common Chinese format
         var m = val.match(/(\d{4})[年\/\-.](\d{1,2})[月\/\-.](\d{1,2})/);
         if (m) d = new Date(m[1], m[2] - 1, m[3]);
       }
-      if (isNaN(d.getTime())) { tsDateResult.textContent = '无法解析日期，请使用格式: 2024-01-01 12:00:00'; return; }
+      if (isNaN(d.getTime())) { renderRight({ kind: 'err', key: 'ts.err.dateInvalid' }); return; }
 
-      var sec = Math.floor(d.getTime() / 1000);
-      var ms = d.getTime();
-      tsDateResult.innerHTML =
-        '<div>Unix 秒: <strong>' + sec + '</strong></div>' +
-        '<div>Unix 毫秒: <strong>' + ms + '</strong></div>' +
-        '<div>ISO: ' + d.toISOString() + '</div>';
+      renderRight({ kind: 'ms', ms: d.getTime() });
+    });
+
+    onLangChange(function () {
+      if (lastLeft) renderLeft(lastLeft);
+      if (lastRight) renderRight(lastRight);
     });
   }
 
@@ -1082,7 +1472,7 @@
     document.getElementById('colorConvert').addEventListener('click', function () {
       if (!updateColorDisplay(input.value)) {
         result.className = 'result-area';
-        result.innerHTML = '<span style="color:var(--accent-red);">无法解析颜色值，支持 HEX (#fff, #ffffff), RGB, HSL</span>';
+        result.innerHTML = '<span style="color:var(--accent-red);">' + t('color.err.parse') + '</span>';
       }
     });
 
@@ -1092,7 +1482,7 @@
     });
 
     document.getElementById('colorCopy').addEventListener('click', function () {
-      copyToClipboard(hexLabel.textContent, 'HEX 颜色');
+      copyToClipboard(hexLabel.textContent, t('copy.hex'));
     });
 
     // Initial display
@@ -1190,27 +1580,36 @@
   // ============================================================
 
   function initNumberBase() {
+    var output = document.getElementById('numResult');
+    var lastNum = null;
+
+    function renderResult(num) {
+      output.className = 'result-area';
+      output.innerHTML =
+        '<div><strong>' + t('nb.bin') + ':</strong> ' + num.toString(2) + '</div>' +
+        '<div><strong>' + t('nb.oct') + ':</strong> ' + num.toString(8) + '</div>' +
+        '<div><strong>' + t('nb.dec') + ':</strong> ' + num.toString(10) + '</div>' +
+        '<div><strong>' + t('nb.hex') + ':</strong> ' + num.toString(16).toUpperCase() + '</div>';
+    }
+
     document.getElementById('numConvert').addEventListener('click', function () {
       var input = document.getElementById('numInput').value.trim();
       var fromBase = parseInt(document.getElementById('numFromBase').value);
-      var output = document.getElementById('numResult');
 
-      if (!input) { output.textContent = '请输入数字'; return; }
+      if (!input) { lastNum = null; output.textContent = t('nb.err.empty'); return; }
 
       try {
         var num = parseInt(input, fromBase);
-        if (isNaN(num)) { output.textContent = '无效的数字或与所选进制不匹配'; return; }
-
-        output.className = 'result-area';
-        output.innerHTML =
-          '<div><strong>二进制 (Base 2):</strong> ' + num.toString(2) + '</div>' +
-          '<div><strong>八进制 (Base 8):</strong> ' + num.toString(8) + '</div>' +
-          '<div><strong>十进制 (Base 10):</strong> ' + num.toString(10) + '</div>' +
-          '<div><strong>十六进制 (Base 16):</strong> ' + num.toString(16).toUpperCase() + '</div>';
+        if (isNaN(num)) { lastNum = null; output.textContent = t('nb.err.invalid'); return; }
+        lastNum = num;
+        renderResult(num);
       } catch (e) {
-        output.textContent = '转换错误: ' + e.message;
+        lastNum = null;
+        output.textContent = t('nb.err.generic', { msg: e.message });
       }
     });
+
+    onLangChange(function () { if (lastNum !== null) renderResult(lastNum); });
   }
 
   // ============================================================
@@ -1218,23 +1617,23 @@
   // ============================================================
 
   function initJwtDecode() {
-    document.getElementById('jwtDecode').addEventListener('click', function () {
-      var input = document.getElementById('jwtInput').value.trim();
-      var partsContainer = document.getElementById('jwtParts');
-      var error = document.getElementById('jwtError');
+    var partsContainer = document.getElementById('jwtParts');
+    var error = document.getElementById('jwtError');
+    var lastInput = null;
 
+    function decodeAndRender(input) {
       partsContainer.innerHTML = '';
       error.style.display = 'none';
 
       if (!input) {
-        error.textContent = '请输入 JWT Token';
+        error.textContent = t('jwt.err.empty');
         error.style.display = 'block';
         return;
       }
 
       var parts = input.split('.');
       if (parts.length !== 3) {
-        error.textContent = '无效的 JWT Token 格式（应包含 3 段，由 . 分隔）';
+        error.textContent = t('jwt.err.format');
         error.style.display = 'block';
         return;
       }
@@ -1243,7 +1642,6 @@
       for (var i = 0; i < 3; i++) {
         var decoded;
         try {
-          // Base64Url decode
           var b64 = parts[i].replace(/-/g, '+').replace(/_/g, '/');
           while (b64.length % 4) b64 += '=';
           var raw = atob(b64);
@@ -1252,10 +1650,10 @@
             var obj = JSON.parse(raw);
             decoded = JSON.stringify(obj, null, 2);
           } else {
-            decoded = '(签名数据，无法解码为 JSON)';
+            decoded = t('jwt.signatureNote');
           }
         } catch (e) {
-          decoded = '(解码失败: ' + e.message + ')';
+          decoded = t('jwt.err.decodeFail', { msg: e.message });
         }
 
         var partEl = document.createElement('div');
@@ -1265,7 +1663,14 @@
           '<div class="jwt-part-content">' + (i < 2 ? syntaxHighlightJson(decoded) : decoded) + '</div>';
         partsContainer.appendChild(partEl);
       }
+    }
+
+    document.getElementById('jwtDecode').addEventListener('click', function () {
+      lastInput = document.getElementById('jwtInput').value.trim();
+      decodeAndRender(lastInput);
     });
+
+    onLangChange(function () { if (lastInput !== null) decodeAndRender(lastInput); });
   }
 
   function syntaxHighlightJson(json) {
@@ -1318,9 +1723,9 @@
         var obj = jsyaml.load(yamlEl.value);
         jsonEl.value = JSON.stringify(obj, null, 2);
         showErr('');
-        showToast('已转换为 JSON', 'success');
+        showToast(t('yj.toast.toJson'), 'success');
       } catch (e) {
-        showErr('YAML 解析错误: ' + e.message);
+        showErr(t('yj.err.yaml', { msg: e.message }));
       }
     });
 
@@ -1329,9 +1734,9 @@
         var obj = JSON.parse(jsonEl.value);
         yamlEl.value = jsyaml.dump(obj, { indent: 2, lineWidth: -1 });
         showErr('');
-        showToast('已转换为 YAML', 'success');
+        showToast(t('yj.toast.toYaml'), 'success');
       } catch (e) {
-        showErr('JSON 解析错误: ' + e.message);
+        showErr(t('yj.err.json', { msg: e.message }));
       }
     });
   }
@@ -1361,9 +1766,9 @@
         wrap[doc.documentElement.nodeName] = obj;
         jsonEl.value = JSON.stringify(wrap, null, 2);
         showErr('');
-        showToast('已转换为 JSON', 'success');
+        showToast(t('xj.toast.toJson'), 'success');
       } catch (e) {
-        showErr('XML 解析错误: ' + e.message);
+        showErr(t('xj.err.xml', { msg: e.message }));
       }
     });
 
@@ -1372,9 +1777,9 @@
         var obj = JSON.parse(jsonEl.value);
         xmlEl.value = formatXml(jsonToXml(obj));
         showErr('');
-        showToast('已转换为 XML', 'success');
+        showToast(t('xj.toast.toXml'), 'success');
       } catch (e) {
-        showErr('转换错误: ' + e.message);
+        showErr(t('xj.err.convert', { msg: e.message }));
       }
     });
   }
@@ -1480,13 +1885,13 @@
 
     document.getElementById('sqlFormatBtn').addEventListener('click', function () {
       var fmt = getFormatter();
-      if (!fmt) { output.textContent = 'SQL 格式化库未加载'; return; }
+      if (!fmt) { output.textContent = t('sql.err.notLoaded'); return; }
       try {
         output.className = 'result-area';
         output.textContent = fmt(input.value, { language: dialect.value, keywordCase: 'upper' });
       } catch (e) {
         output.className = 'result-area';
-        output.innerHTML = '<span style="color:var(--accent-red);">格式化错误: ' + escapeHtml(e.message) + '</span>';
+        output.innerHTML = '<span style="color:var(--accent-red);">' + t('sql.err.format', { msg: escapeHtml(e.message) }) + '</span>';
       }
     });
 
@@ -1496,7 +1901,7 @@
     });
 
     document.getElementById('sqlCopy').addEventListener('click', function () {
-      copyToClipboard(output.textContent, 'SQL');
+      copyToClipboard(output.textContent, t('copy.sql'));
     });
   }
 
@@ -1522,7 +1927,7 @@
         enc.value = btoa(bin);
         showErr('');
       } catch (e) {
-        showErr('编码错误: ' + e.message);
+        showErr(t('b64t.err.encode', { msg: e.message }));
       }
     });
 
@@ -1534,7 +1939,7 @@
         raw.value = new TextDecoder('utf-8').decode(bytes);
         showErr('');
       } catch (e) {
-        showErr('解码错误: ' + e.message);
+        showErr(t('b64t.err.decode', { msg: e.message }));
       }
     });
   }
@@ -1557,7 +1962,7 @@
 
     document.getElementById('aesEncryptBtn').addEventListener('click', function () {
       try {
-        if (!keyEl.value) { showErr('请输入密钥'); return; }
+        if (!keyEl.value) { showErr(t('aes.err.noKey')); return; }
         var opts = modeEl.value === 'ECB'
           ? { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7 }
           : undefined;
@@ -1570,15 +1975,15 @@
         }
         cipherEl.value = encrypted;
         showErr('');
-        showToast('加密成功', 'success');
+        showToast(t('aes.toast.encrypt'), 'success');
       } catch (e) {
-        showErr('加密失败: ' + e.message);
+        showErr(t('aes.err.encrypt', { msg: e.message }));
       }
     });
 
     document.getElementById('aesDecryptBtn').addEventListener('click', function () {
       try {
-        if (!keyEl.value) { showErr('请输入密钥'); return; }
+        if (!keyEl.value) { showErr(t('aes.err.noKey')); return; }
         var bytes;
         if (modeEl.value === 'ECB') {
           var key = CryptoJS.enc.Utf8.parse(keyEl.value.padEnd(32, '\0').slice(0, 32));
@@ -1587,12 +1992,12 @@
           bytes = CryptoJS.AES.decrypt(cipherEl.value, keyEl.value);
         }
         var text = bytes.toString(CryptoJS.enc.Utf8);
-        if (!text) throw new Error('结果为空，请检查密钥或密文');
+        if (!text) throw new Error(t('aes.err.empty'));
         plainEl.value = text;
         showErr('');
-        showToast('解密成功', 'success');
+        showToast(t('aes.toast.decrypt'), 'success');
       } catch (e) {
-        showErr('解密失败: ' + e.message);
+        showErr(t('aes.err.decrypt', { msg: e.message }));
       }
     });
   }
@@ -1662,7 +2067,7 @@
     });
 
     document.getElementById('loremCopy').addEventListener('click', function () {
-      copyToClipboard(output.textContent, 'Lorem 文本');
+      copyToClipboard(output.textContent, t('copy.lorem'));
     });
   }
 
@@ -1697,11 +2102,12 @@
       var cjk = text.match(/[一-龥　-〿＀-￯]/g);
       fields.cjk.textContent = (cjk ? cjk.length : 0).toLocaleString();
       var sec = Math.ceil(wordCount / 200 * 60);
-      if (sec < 60) fields.readTime.textContent = sec + ' 秒';
-      else fields.readTime.textContent = Math.floor(sec / 60) + ' 分 ' + (sec % 60) + ' 秒';
+      if (sec < 60) fields.readTime.textContent = t('stats.sec', { n: sec });
+      else fields.readTime.textContent = t('stats.minSec', { m: Math.floor(sec / 60), s: sec % 60 });
     }
 
     input.addEventListener('input', update);
+    onLangChange(update);
     update();
   }
 
@@ -1716,35 +2122,38 @@
 
     function parse() {
       var expr = input.value.trim();
-      if (!expr) { explain.textContent = '请输入 Cron 表达式'; nextEl.textContent = ''; return; }
+      if (!expr) { explain.textContent = t('cron.empty'); nextEl.textContent = ''; return; }
 
       var parts = expr.split(/\s+/);
       if (parts.length !== 5) {
         explain.className = 'result-area';
-        explain.innerHTML = '<span style="color:var(--accent-red);">仅支持标准 5 段表达式（分 时 日 月 周）</span>';
+        explain.innerHTML = '<span style="color:var(--accent-red);">' + t('cron.err.format') + '</span>';
         nextEl.textContent = '';
         return;
       }
 
-      var fields = [
-        { name: '分钟', range: [0, 59] },
-        { name: '小时', range: [0, 23] },
-        { name: '日期', range: [1, 31] },
-        { name: '月份', range: [1, 12] },
-        { name: '星期', range: [0, 6] }
+      var fieldNames = [
+        t('cron.field.minute'),
+        t('cron.field.hour'),
+        t('cron.field.date'),
+        t('cron.field.month'),
+        t('cron.field.weekday')
       ];
+      var ranges = [[0, 59], [0, 23], [1, 31], [1, 12], [0, 6]];
 
       try {
-        var parsed = parts.map(function (p, i) { return parseField(p, fields[i].range[0], fields[i].range[1]); });
-        var lines = [];
-        var labelsMonth = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
-        var labelsWeek = ['周日','周一','周二','周三','周四','周五','周六'];
+        var parsed = parts.map(function (p, i) { return parseField(p, ranges[i][0], ranges[i][1]); });
+        var labelsMonth = [];
+        for (var m = 1; m <= 12; m++) labelsMonth.push(t('cron.month.' + m));
+        var labelsWeek = [];
+        for (var w = 0; w <= 6; w++) labelsWeek.push(t('cron.week.' + w));
 
-        lines.push('分钟: ' + describeField(parts[0], parsed[0], fields[0].range));
-        lines.push('小时: ' + describeField(parts[1], parsed[1], fields[1].range));
-        lines.push('日期: ' + describeField(parts[2], parsed[2], fields[2].range));
-        lines.push('月份: ' + describeField(parts[3], parsed[3], fields[3].range, labelsMonth, 1));
-        lines.push('星期: ' + describeField(parts[4], parsed[4], fields[4].range, labelsWeek, 0));
+        var lines = [];
+        lines.push(fieldNames[0] + ': ' + describeField(parts[0], parsed[0], ranges[0]));
+        lines.push(fieldNames[1] + ': ' + describeField(parts[1], parsed[1], ranges[1]));
+        lines.push(fieldNames[2] + ': ' + describeField(parts[2], parsed[2], ranges[2]));
+        lines.push(fieldNames[3] + ': ' + describeField(parts[3], parsed[3], ranges[3], labelsMonth, 1));
+        lines.push(fieldNames[4] + ': ' + describeField(parts[4], parsed[4], ranges[4], labelsWeek, 0));
 
         explain.className = 'result-area';
         explain.innerHTML = lines.map(function (l) { return '<div>' + escapeHtml(l) + '</div>'; }).join('');
@@ -1753,10 +2162,10 @@
         nextEl.className = 'result-area';
         nextEl.innerHTML = times.map(function (d, i) {
           return '<div>[' + (i + 1) + '] ' + formatLocal(d) + '</div>';
-        }).join('') || '<span style="color:var(--text-secondary);">未来一年内无匹配时间</span>';
+        }).join('') || '<span style="color:var(--text-secondary);">' + t('cron.noFutureMatch') + '</span>';
       } catch (e) {
         explain.className = 'result-area';
-        explain.innerHTML = '<span style="color:var(--accent-red);">解析错误: ' + escapeHtml(e.message) + '</span>';
+        explain.innerHTML = '<span style="color:var(--accent-red);">' + t('cron.err.parse', { msg: escapeHtml(e.message) }) + '</span>';
         nextEl.textContent = '';
       }
     }
@@ -1769,7 +2178,7 @@
         if (stepIdx !== -1) {
           step = parseInt(part.substring(stepIdx + 1));
           part = part.substring(0, stepIdx);
-          if (isNaN(step) || step <= 0) throw new Error('无效的步长: ' + part);
+          if (isNaN(step) || step <= 0) throw new Error(t('cron.err.step', { p: part }));
         }
         var lo, hi;
         if (part === '*' || part === '') { lo = min; hi = max; }
@@ -1779,23 +2188,23 @@
         } else {
           lo = hi = parseInt(part);
         }
-        if (isNaN(lo) || isNaN(hi)) throw new Error('无效字段: ' + part);
-        if (lo < min || hi > max || lo > hi) throw new Error('字段超出范围 [' + min + ',' + max + ']: ' + part);
+        if (isNaN(lo) || isNaN(hi)) throw new Error(t('cron.err.field', { p: part }));
+        if (lo < min || hi > max || lo > hi) throw new Error(t('cron.err.range', { min: min, max: max, p: part }));
         for (var i = lo; i <= hi; i += step) set[i] = true;
       });
       return Object.keys(set).map(Number).sort(function (a, b) { return a - b; });
     }
 
     function describeField(raw, values, range, labels, base) {
-      if (raw === '*') return '每' + (range[0] === 0 ? '' : '') + '值';
-      if (values.length === range[1] - range[0] + 1) return '任意';
+      if (raw === '*') return t('cron.any');
+      if (values.length === range[1] - range[0] + 1) return t('cron.any');
       if (values.length === 1) {
         return labels ? labels[values[0] - (base || 0)] : String(values[0]);
       }
       if (values.length <= 8) {
         return values.map(function (v) { return labels ? labels[v - (base || 0)] : v; }).join(', ');
       }
-      return values.length + ' 个匹配值: ' + values.slice(0, 6).join(', ') + '...';
+      return t('cron.values', { n: values.length, head: values.slice(0, 6).join(', ') });
     }
 
     function nextRunTimes(parsed, n) {
@@ -1818,12 +2227,21 @@
     }
 
     function formatLocal(d) {
+      var weekLabels = [
+        t('cron.week.0'),
+        t('cron.week.1'),
+        t('cron.week.2'),
+        t('cron.week.3'),
+        t('cron.week.4'),
+        t('cron.week.5'),
+        t('cron.week.6')
+      ];
       return d.getFullYear() + '-' +
         String(d.getMonth() + 1).padStart(2, '0') + '-' +
         String(d.getDate()).padStart(2, '0') + ' ' +
         String(d.getHours()).padStart(2, '0') + ':' +
         String(d.getMinutes()).padStart(2, '0') + ':00 (' +
-        ['日','一','二','三','四','五','六'][d.getDay()] + ')';
+        weekLabels[d.getDay()] + ')';
     }
 
     input.addEventListener('input', parse);
@@ -1836,6 +2254,8 @@
         parse();
       });
     });
+
+    onLangChange(parse);
 
     parse();
   }
@@ -1867,7 +2287,7 @@
           '<input type="color" data-i="' + i + '" data-k="color" value="' + s.color + '">' +
           '<input type="number" data-i="' + i + '" data-k="pos" value="' + s.pos + '" min="0" max="100">' +
           '<span class="grad-stop-pos-label">%</span>' +
-          '<button class="grad-stop-remove" data-i="' + i + '" title="删除">×</button>';
+          '<button class="grad-stop-remove" data-i="' + i + '" title="' + t('grad.btn.remove') + '">×</button>';
         stopsEl.appendChild(row);
       });
 
@@ -1883,7 +2303,7 @@
       stopsEl.querySelectorAll('.grad-stop-remove').forEach(function (el) {
         el.addEventListener('click', function () {
           var i = parseInt(this.getAttribute('data-i'));
-          if (stops.length <= 2) { showToast('至少保留 2 个色标', 'error'); return; }
+          if (stops.length <= 2) { showToast(t('grad.toast.minStops'), 'error'); return; }
           stops.splice(i, 1);
           renderStops();
           updateGradient();
@@ -1922,8 +2342,10 @@
     });
 
     document.getElementById('gradCopy').addEventListener('click', function () {
-      copyToClipboard(cssEl.value, 'CSS');
+      copyToClipboard(cssEl.value, t('copy.css'));
     });
+
+    onLangChange(renderStops);
 
     renderStops();
     updateGradient();
@@ -1934,70 +2356,75 @@
   // ============================================================
 
   var HTTP_STATUS = [
-    { code: 100, name: 'Continue', desc: '客户端应继续发送请求剩余部分。' },
-    { code: 101, name: 'Switching Protocols', desc: '服务器已理解并切换协议（如升级到 WebSocket）。' },
-    { code: 102, name: 'Processing', desc: '服务器已收到并处理中（WebDAV）。' },
-    { code: 103, name: 'Early Hints', desc: '提前返回提示头部信息，便于预加载资源。' },
+    { code: 100, name: 'Continue', zh: '客户端应继续发送请求剩余部分。', en: 'Client should continue with its request.' },
+    { code: 101, name: 'Switching Protocols', zh: '服务器已理解并切换协议（如升级到 WebSocket）。', en: 'Server is switching protocols as requested (e.g. WebSocket upgrade).' },
+    { code: 102, name: 'Processing', zh: '服务器已收到并处理中（WebDAV）。', en: 'Server received and is processing (WebDAV).' },
+    { code: 103, name: 'Early Hints', zh: '提前返回提示头部信息，便于预加载资源。', en: 'Early hint headers, useful for resource preloading.' },
 
-    { code: 200, name: 'OK', desc: '请求成功，最常见的成功响应。' },
-    { code: 201, name: 'Created', desc: '请求成功且创建了新资源（POST 后常用）。' },
-    { code: 202, name: 'Accepted', desc: '请求已接收但尚未处理完成（异步任务）。' },
-    { code: 203, name: 'Non-Authoritative Information', desc: '响应来自第三方副本而非源服务器。' },
-    { code: 204, name: 'No Content', desc: '请求成功但响应体为空（DELETE 后常用）。' },
-    { code: 205, name: 'Reset Content', desc: '客户端应重置文档视图。' },
-    { code: 206, name: 'Partial Content', desc: '范围请求成功，返回部分内容（断点续传）。' },
+    { code: 200, name: 'OK', zh: '请求成功，最常见的成功响应。', en: 'Request succeeded; the most common success response.' },
+    { code: 201, name: 'Created', zh: '请求成功且创建了新资源（POST 后常用）。', en: 'Request succeeded and a new resource was created (typical for POST).' },
+    { code: 202, name: 'Accepted', zh: '请求已接收但尚未处理完成（异步任务）。', en: 'Request accepted but processing not finished (async task).' },
+    { code: 203, name: 'Non-Authoritative Information', zh: '响应来自第三方副本而非源服务器。', en: 'Response from a third-party copy, not the origin server.' },
+    { code: 204, name: 'No Content', zh: '请求成功但响应体为空（DELETE 后常用）。', en: 'Request succeeded but response body is empty (typical for DELETE).' },
+    { code: 205, name: 'Reset Content', zh: '客户端应重置文档视图。', en: 'Client should reset the document view.' },
+    { code: 206, name: 'Partial Content', zh: '范围请求成功，返回部分内容（断点续传）。', en: 'Range request succeeded; partial content returned (resumable downloads).' },
 
-    { code: 301, name: 'Moved Permanently', desc: '资源已永久移动到新位置，搜索引擎应更新索引。' },
-    { code: 302, name: 'Found', desc: '资源临时位于其他位置（保留请求方法）。' },
-    { code: 303, name: 'See Other', desc: '使用 GET 方法跳转到指定地址。' },
-    { code: 304, name: 'Not Modified', desc: '资源未变化，可使用本地缓存。' },
-    { code: 307, name: 'Temporary Redirect', desc: '临时重定向，必须保留原方法和请求体。' },
-    { code: 308, name: 'Permanent Redirect', desc: '永久重定向，必须保留原方法和请求体。' },
+    { code: 301, name: 'Moved Permanently', zh: '资源已永久移动到新位置，搜索引擎应更新索引。', en: 'Resource permanently moved; search engines should update their index.' },
+    { code: 302, name: 'Found', zh: '资源临时位于其他位置（保留请求方法）。', en: 'Resource temporarily located elsewhere (method preserved).' },
+    { code: 303, name: 'See Other', zh: '使用 GET 方法跳转到指定地址。', en: 'Redirect using GET method to the specified address.' },
+    { code: 304, name: 'Not Modified', zh: '资源未变化，可使用本地缓存。', en: 'Resource unchanged; client may use cached copy.' },
+    { code: 307, name: 'Temporary Redirect', zh: '临时重定向，必须保留原方法和请求体。', en: 'Temporary redirect; original method and body must be preserved.' },
+    { code: 308, name: 'Permanent Redirect', zh: '永久重定向，必须保留原方法和请求体。', en: 'Permanent redirect; original method and body must be preserved.' },
 
-    { code: 400, name: 'Bad Request', desc: '请求语法错误，服务器无法理解。' },
-    { code: 401, name: 'Unauthorized', desc: '需要身份认证，认证失败或未提供凭据。' },
-    { code: 402, name: 'Payment Required', desc: '保留状态码，预留给付费场景。' },
-    { code: 403, name: 'Forbidden', desc: '服务器拒绝执行，权限不足。' },
-    { code: 404, name: 'Not Found', desc: '请求的资源不存在。' },
-    { code: 405, name: 'Method Not Allowed', desc: '请求方法不被允许（如对静态资源使用 POST）。' },
-    { code: 406, name: 'Not Acceptable', desc: '资源无法满足客户端 Accept 头要求。' },
-    { code: 407, name: 'Proxy Authentication Required', desc: '需要先通过代理认证。' },
-    { code: 408, name: 'Request Timeout', desc: '客户端发送请求超时。' },
-    { code: 409, name: 'Conflict', desc: '请求与服务器当前状态冲突（如版本冲突）。' },
-    { code: 410, name: 'Gone', desc: '资源已永久删除，无转发地址。' },
-    { code: 411, name: 'Length Required', desc: '请求未指定 Content-Length。' },
-    { code: 412, name: 'Precondition Failed', desc: '请求头中的前提条件不成立。' },
-    { code: 413, name: 'Payload Too Large', desc: '请求体过大，服务器拒绝处理。' },
-    { code: 414, name: 'URI Too Long', desc: '请求 URI 过长。' },
-    { code: 415, name: 'Unsupported Media Type', desc: '不支持的媒体类型。' },
-    { code: 416, name: 'Range Not Satisfiable', desc: 'Range 请求范围无效。' },
-    { code: 417, name: 'Expectation Failed', desc: 'Expect 请求头无法满足。' },
-    { code: 418, name: "I'm a teapot", desc: '愚人节彩蛋，永远不会冲泡咖啡的茶壶。' },
-    { code: 422, name: 'Unprocessable Entity', desc: '请求格式正确但语义错误（参数校验失败）。' },
-    { code: 423, name: 'Locked', desc: '资源被锁定（WebDAV）。' },
-    { code: 425, name: 'Too Early', desc: '服务器拒绝处理可能被重放的请求。' },
-    { code: 426, name: 'Upgrade Required', desc: '客户端应升级到不同协议。' },
-    { code: 428, name: 'Precondition Required', desc: '需要先决条件头部。' },
-    { code: 429, name: 'Too Many Requests', desc: '请求过于频繁，触发限流。' },
-    { code: 431, name: 'Request Header Fields Too Large', desc: '请求头过大。' },
-    { code: 451, name: 'Unavailable For Legal Reasons', desc: '因法律原因无法提供。' },
+    { code: 400, name: 'Bad Request', zh: '请求语法错误，服务器无法理解。', en: 'Request syntax error; server cannot understand it.' },
+    { code: 401, name: 'Unauthorized', zh: '需要身份认证，认证失败或未提供凭据。', en: 'Authentication required, failed, or credentials missing.' },
+    { code: 402, name: 'Payment Required', zh: '保留状态码，预留给付费场景。', en: 'Reserved status code, intended for paid resources.' },
+    { code: 403, name: 'Forbidden', zh: '服务器拒绝执行，权限不足。', en: 'Server refuses to fulfill the request; insufficient permissions.' },
+    { code: 404, name: 'Not Found', zh: '请求的资源不存在。', en: 'Requested resource does not exist.' },
+    { code: 405, name: 'Method Not Allowed', zh: '请求方法不被允许（如对静态资源使用 POST）。', en: 'Request method not allowed (e.g. POST against a static resource).' },
+    { code: 406, name: 'Not Acceptable', zh: '资源无法满足客户端 Accept 头要求。', en: 'Resource cannot satisfy the client Accept header.' },
+    { code: 407, name: 'Proxy Authentication Required', zh: '需要先通过代理认证。', en: 'Client must authenticate with the proxy first.' },
+    { code: 408, name: 'Request Timeout', zh: '客户端发送请求超时。', en: 'Client request timed out.' },
+    { code: 409, name: 'Conflict', zh: '请求与服务器当前状态冲突（如版本冲突）。', en: 'Request conflicts with current server state (e.g. version conflict).' },
+    { code: 410, name: 'Gone', zh: '资源已永久删除，无转发地址。', en: 'Resource permanently deleted; no forwarding address.' },
+    { code: 411, name: 'Length Required', zh: '请求未指定 Content-Length。', en: 'Request did not specify Content-Length.' },
+    { code: 412, name: 'Precondition Failed', zh: '请求头中的前提条件不成立。', en: 'Precondition in request headers failed.' },
+    { code: 413, name: 'Payload Too Large', zh: '请求体过大，服务器拒绝处理。', en: 'Request body too large; server refuses to process.' },
+    { code: 414, name: 'URI Too Long', zh: '请求 URI 过长。', en: 'Request URI is too long.' },
+    { code: 415, name: 'Unsupported Media Type', zh: '不支持的媒体类型。', en: 'Unsupported media type.' },
+    { code: 416, name: 'Range Not Satisfiable', zh: 'Range 请求范围无效。', en: 'Requested range is not satisfiable.' },
+    { code: 417, name: 'Expectation Failed', zh: 'Expect 请求头无法满足。', en: 'Expect request header cannot be satisfied.' },
+    { code: 418, name: "I'm a teapot", zh: '愚人节彩蛋，永远不会冲泡咖啡的茶壶。', en: 'April Fools easter egg: a teapot will never brew coffee.' },
+    { code: 422, name: 'Unprocessable Entity', zh: '请求格式正确但语义错误（参数校验失败）。', en: 'Request is well-formed but semantically incorrect (validation failed).' },
+    { code: 423, name: 'Locked', zh: '资源被锁定（WebDAV）。', en: 'Resource is locked (WebDAV).' },
+    { code: 425, name: 'Too Early', zh: '服务器拒绝处理可能被重放的请求。', en: 'Server refuses to process a request that might be replayed.' },
+    { code: 426, name: 'Upgrade Required', zh: '客户端应升级到不同协议。', en: 'Client should upgrade to a different protocol.' },
+    { code: 428, name: 'Precondition Required', zh: '需要先决条件头部。', en: 'Precondition headers are required.' },
+    { code: 429, name: 'Too Many Requests', zh: '请求过于频繁，触发限流。', en: 'Too many requests; rate limit triggered.' },
+    { code: 431, name: 'Request Header Fields Too Large', zh: '请求头过大。', en: 'Request header fields are too large.' },
+    { code: 451, name: 'Unavailable For Legal Reasons', zh: '因法律原因无法提供。', en: 'Unavailable due to legal reasons.' },
 
-    { code: 500, name: 'Internal Server Error', desc: '服务器内部错误，最常见的服务端错误。' },
-    { code: 501, name: 'Not Implemented', desc: '服务器不支持该请求方法。' },
-    { code: 502, name: 'Bad Gateway', desc: '网关或代理收到上游无效响应。' },
-    { code: 503, name: 'Service Unavailable', desc: '服务暂不可用（过载或维护）。' },
-    { code: 504, name: 'Gateway Timeout', desc: '网关或代理上游响应超时。' },
-    { code: 505, name: 'HTTP Version Not Supported', desc: '不支持的 HTTP 版本。' },
-    { code: 507, name: 'Insufficient Storage', desc: '存储空间不足。' },
-    { code: 508, name: 'Loop Detected', desc: '检测到无限循环（WebDAV）。' },
-    { code: 510, name: 'Not Extended', desc: '需要进一步扩展才能完成请求。' },
-    { code: 511, name: 'Network Authentication Required', desc: '需要进行网络认证（如公共 WiFi 登录）。' }
+    { code: 500, name: 'Internal Server Error', zh: '服务器内部错误，最常见的服务端错误。', en: 'Server internal error; the most common server-side error.' },
+    { code: 501, name: 'Not Implemented', zh: '服务器不支持该请求方法。', en: 'Server does not support the requested method.' },
+    { code: 502, name: 'Bad Gateway', zh: '网关或代理收到上游无效响应。', en: 'Gateway or proxy received an invalid response from upstream.' },
+    { code: 503, name: 'Service Unavailable', zh: '服务暂不可用（过载或维护）。', en: 'Service temporarily unavailable (overload or maintenance).' },
+    { code: 504, name: 'Gateway Timeout', zh: '网关或代理上游响应超时。', en: 'Gateway or proxy timed out waiting for upstream.' },
+    { code: 505, name: 'HTTP Version Not Supported', zh: '不支持的 HTTP 版本。', en: 'HTTP version not supported.' },
+    { code: 507, name: 'Insufficient Storage', zh: '存储空间不足。', en: 'Insufficient storage.' },
+    { code: 508, name: 'Loop Detected', zh: '检测到无限循环（WebDAV）。', en: 'Infinite loop detected (WebDAV).' },
+    { code: 510, name: 'Not Extended', zh: '需要进一步扩展才能完成请求。', en: 'Further extensions are required to fulfill the request.' },
+    { code: 511, name: 'Network Authentication Required', zh: '需要进行网络认证（如公共 WiFi 登录）。', en: 'Network authentication required (e.g. captive portal login).' }
   ];
 
   function initHttpStatus() {
     var listEl = document.getElementById('httpList');
     var search = document.getElementById('httpSearch');
     var currentCat = 'all';
+
+    function descOf(s) {
+      var lang = (window.i18n && window.i18n.getLang && window.i18n.getLang()) || 'zh';
+      return lang === 'en' ? s.en : s.zh;
+    }
 
     function render() {
       var q = search.value.trim().toLowerCase();
@@ -2007,11 +2434,12 @@
         if (!q) return true;
         return String(s.code).indexOf(q) !== -1
           || s.name.toLowerCase().indexOf(q) !== -1
-          || s.desc.toLowerCase().indexOf(q) !== -1;
+          || s.zh.toLowerCase().indexOf(q) !== -1
+          || s.en.toLowerCase().indexOf(q) !== -1;
       });
 
       if (!filtered.length) {
-        listEl.innerHTML = '<div style="color:var(--text-secondary);padding:20px;">没有匹配的状态码</div>';
+        listEl.innerHTML = '<div style="color:var(--text-secondary);padding:20px;">' + t('http.empty') + '</div>';
         return;
       }
 
@@ -2020,7 +2448,7 @@
         return '<div class="http-item cat-' + cat + '">' +
           '<div class="http-code">' + s.code + '</div>' +
           '<div class="http-name">' + escapeHtml(s.name) + '</div>' +
-          '<div class="http-desc">' + escapeHtml(s.desc) + '</div>' +
+          '<div class="http-desc">' + escapeHtml(descOf(s)) + '</div>' +
         '</div>';
       }).join('');
     }
@@ -2035,6 +2463,8 @@
         render();
       });
     });
+
+    onLangChange(render);
 
     render();
   }
