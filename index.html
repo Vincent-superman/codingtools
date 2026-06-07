@@ -14,6 +14,9 @@
   <button class="menu-toggle" id="menuToggle" aria-label="Menu">☰</button>
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+  <!-- Language toggle (top-right) -->
+  <button class="lang-toggle" id="langToggle" type="button" aria-label="Language">EN</button>
+
   <!-- ============ SIDEBAR ============ -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
@@ -24,579 +27,608 @@
     </div>
 
     <nav class="sidebar-nav">
-      <div class="nav-category">JSON / 数据</div>
+      <div class="nav-category" data-i18n="nav.cat.json">JSON / 数据</div>
       <a href="#json-formatter" class="nav-item" data-nav="json-formatter">
-        <span class="nav-icon">{ }</span> JSON 格式化
+        <span class="nav-icon">{ }</span> <span data-i18n="nav.json-formatter">JSON 格式化</span>
       </a>
       <a href="#json-convert" class="nav-item" data-nav="json-convert">
-        <span class="nav-icon">↔</span> JSON 序列化/反序列化
+        <span class="nav-icon">↔</span> <span data-i18n="nav.json-convert">JSON 序列化/反序列化</span>
+      </a>
+      <a href="#json-diff" class="nav-item" data-nav="json-diff">
+        <span class="nav-icon">≠</span> <span data-i18n="nav.json-diff">JSON 内容比对</span>
       </a>
       <a href="#yaml-json" class="nav-item" data-nav="yaml-json">
-        <span class="nav-icon">Y↔</span> YAML / JSON 互转
+        <span class="nav-icon">Y↔</span> <span data-i18n="nav.yaml-json">YAML / JSON 互转</span>
       </a>
       <a href="#xml-json" class="nav-item" data-nav="xml-json">
-        <span class="nav-icon">X↔</span> XML / JSON 互转
+        <span class="nav-icon">X↔</span> <span data-i18n="nav.xml-json">XML / JSON 互转</span>
       </a>
       <a href="#sql-format" class="nav-item" data-nav="sql-format">
-        <span class="nav-icon">⚙</span> SQL 格式化
+        <span class="nav-icon">⚙</span> <span data-i18n="nav.sql-format">SQL 格式化</span>
       </a>
 
-      <div class="nav-category">编码解码</div>
+      <div class="nav-category" data-i18n="nav.cat.codec">编码解码</div>
       <a href="#base64-text" class="nav-item" data-nav="base64-text">
-        <span class="nav-icon">B64</span> Base64 文本编解码
+        <span class="nav-icon">B64</span> <span data-i18n="nav.base64-text">Base64 文本编解码</span>
       </a>
       <a href="#base64-image" class="nav-item" data-nav="base64-image">
-        <span class="nav-icon">🖼</span> Base64 图片生成
+        <span class="nav-icon">🖼</span> <span data-i18n="nav.base64-image">Base64 图片生成</span>
       </a>
       <a href="#base64-decode-img" class="nav-item" data-nav="base64-decode-img">
-        <span class="nav-icon">📥</span> Base64 逆向图片
+        <span class="nav-icon">📥</span> <span data-i18n="nav.base64-decode-img">Base64 逆向图片</span>
       </a>
       <a href="#url-encode" class="nav-item" data-nav="url-encode">
-        <span class="nav-icon">🔗</span> URL 编码/解码
+        <span class="nav-icon">🔗</span> <span data-i18n="nav.url-encode">URL 编码/解码</span>
       </a>
       <a href="#html-entity" class="nav-item" data-nav="html-entity">
-        <span class="nav-icon">&lt;&gt;</span> HTML 实体编解码
+        <span class="nav-icon">&lt;&gt;</span> <span data-i18n="nav.html-entity">HTML 实体编解码</span>
       </a>
       <a href="#unicode" class="nav-item" data-nav="unicode">
-        <span class="nav-icon">⎇</span> Unicode 编解码
+        <span class="nav-icon">⎇</span> <span data-i18n="nav.unicode">Unicode 编解码</span>
       </a>
       <a href="#aes-crypt" class="nav-item" data-nav="aes-crypt">
-        <span class="nav-icon">🛡</span> AES 加密 / 解密
+        <span class="nav-icon">🛡</span> <span data-i18n="nav.aes-crypt">AES 加密 / 解密</span>
       </a>
 
-      <div class="nav-category">生成器</div>
+      <div class="nav-category" data-i18n="nav.cat.gen">生成器</div>
       <a href="#qrcode-gen" class="nav-item" data-nav="qrcode-gen">
-        <span class="nav-icon">▣</span> 二维码生成
+        <span class="nav-icon">▣</span> <span data-i18n="nav.qrcode-gen">二维码生成</span>
       </a>
       <a href="#qrcode-decode" class="nav-item" data-nav="qrcode-decode">
-        <span class="nav-icon">⊡</span> 二维码解码
+        <span class="nav-icon">⊡</span> <span data-i18n="nav.qrcode-decode">二维码解码</span>
       </a>
       <a href="#uuid-gen" class="nav-item" data-nav="uuid-gen">
-        <span class="nav-icon">#</span> UUID 生成器
+        <span class="nav-icon">#</span> <span data-i18n="nav.uuid-gen">UUID 生成器</span>
       </a>
       <a href="#hash-gen" class="nav-item" data-nav="hash-gen">
-        <span class="nav-icon">🔐</span> Hash 生成器
+        <span class="nav-icon">🔐</span> <span data-i18n="nav.hash-gen">Hash 生成器</span>
       </a>
       <a href="#password-gen" class="nav-item" data-nav="password-gen">
-        <span class="nav-icon">🔑</span> 随机密码生成
+        <span class="nav-icon">🔑</span> <span data-i18n="nav.password-gen">随机密码生成</span>
       </a>
       <a href="#lorem-gen" class="nav-item" data-nav="lorem-gen">
-        <span class="nav-icon">¶</span> Lorem 占位文本
+        <span class="nav-icon">¶</span> <span data-i18n="nav.lorem-gen">Lorem 占位文本</span>
       </a>
 
-      <div class="nav-category">文本工具</div>
+      <div class="nav-category" data-i18n="nav.cat.text">文本工具</div>
       <a href="#regex-tester" class="nav-item" data-nav="regex-tester">
-        <span class="nav-icon">.*</span> 正则测试器
+        <span class="nav-icon">.*</span> <span data-i18n="nav.regex-tester">正则测试器</span>
       </a>
       <a href="#text-diff" class="nav-item" data-nav="text-diff">
-        <span class="nav-icon">≅</span> 文本差异对比
+        <span class="nav-icon">≅</span> <span data-i18n="nav.text-diff">文本差异对比</span>
       </a>
       <a href="#markdown" class="nav-item" data-nav="markdown">
-        <span class="nav-icon">M↓</span> Markdown 预览
+        <span class="nav-icon">M↓</span> <span data-i18n="nav.markdown">Markdown 预览</span>
       </a>
       <a href="#case-convert" class="nav-item" data-nav="case-convert">
-        <span class="nav-icon">Aa</span> 大小写转换
+        <span class="nav-icon">Aa</span> <span data-i18n="nav.case-convert">大小写转换</span>
       </a>
       <a href="#text-stats" class="nav-item" data-nav="text-stats">
-        <span class="nav-icon">∑</span> 文本统计
+        <span class="nav-icon">∑</span> <span data-i18n="nav.text-stats">文本统计</span>
       </a>
 
-      <div class="nav-category">转换工具</div>
+      <div class="nav-category" data-i18n="nav.cat.convert">转换工具</div>
       <a href="#timestamp" class="nav-item" data-nav="timestamp">
-        <span class="nav-icon">⏱</span> 时间戳转换
+        <span class="nav-icon">⏱</span> <span data-i18n="nav.timestamp">时间戳转换</span>
       </a>
       <a href="#cron-parse" class="nav-item" data-nav="cron-parse">
-        <span class="nav-icon">⏲</span> Cron 表达式解析
+        <span class="nav-icon">⏲</span> <span data-i18n="nav.cron-parse">Cron 表达式解析</span>
       </a>
       <a href="#color" class="nav-item" data-nav="color">
-        <span class="nav-icon">🎨</span> 颜色转换
+        <span class="nav-icon">🎨</span> <span data-i18n="nav.color">颜色转换</span>
       </a>
       <a href="#css-gradient" class="nav-item" data-nav="css-gradient">
-        <span class="nav-icon">▥</span> CSS 渐变生成
+        <span class="nav-icon">▥</span> <span data-i18n="nav.css-gradient">CSS 渐变生成</span>
       </a>
       <a href="#number-base" class="nav-item" data-nav="number-base">
-        <span class="nav-icon">0x</span> 进制转换
+        <span class="nav-icon">0x</span> <span data-i18n="nav.number-base">进制转换</span>
       </a>
       <a href="#jwt-decode" class="nav-item" data-nav="jwt-decode">
-        <span class="nav-icon">◈</span> JWT 解码
+        <span class="nav-icon">◈</span> <span data-i18n="nav.jwt-decode">JWT 解码</span>
       </a>
 
-      <div class="nav-category">速查参考</div>
+      <div class="nav-category" data-i18n="nav.cat.ref">速查参考</div>
       <a href="#http-status" class="nav-item" data-nav="http-status">
-        <span class="nav-icon">⚑</span> HTTP 状态码
+        <span class="nav-icon">⚑</span> <span data-i18n="nav.http-status">HTTP 状态码</span>
       </a>
     </nav>
 
     <div class="sidebar-footer">
-      <span class="dot"></span> 所有工具均在浏览器本地运行
+      <span class="dot"></span> <span data-i18n="sidebar.footer">所有工具均在浏览器本地运行</span>
     </div>
   </aside>
 
   <!-- ============ MAIN CONTENT ============ -->
   <main class="main">
 
-    <!-- ========================================
-         HOME
-         ======================================== -->
+    <!-- HOME -->
     <section class="tool-section active" id="home">
       <div class="tool-header">
-        <h1>开发者工具集</h1>
-        <p class="tool-desc">所有工具均在浏览器本地运行，无需后端，数据不会上传到服务器。</p>
+        <h1 data-i18n="home.title">开发者工具集</h1>
+        <p class="tool-desc" data-i18n="home.desc">所有工具均在浏览器本地运行，无需后端，数据不会上传到服务器。</p>
       </div>
       <div class="home-grid">
         <a href="#json-formatter" class="tool-card" data-nav="json-formatter">
           <span class="card-icon blue">{ }</span>
-          <span class="card-title">JSON 格式化</span>
-          <span class="card-desc">格式化、压缩、验证 JSON 数据，支持语法高亮</span>
+          <span class="card-title" data-i18n="card.json-formatter.title">JSON 格式化</span>
+          <span class="card-desc" data-i18n="card.json-formatter.desc">格式化、压缩、验证 JSON 数据，支持语法高亮</span>
         </a>
         <a href="#json-convert" class="tool-card" data-nav="json-convert">
           <span class="card-icon blue">↔</span>
-          <span class="card-title">JSON 序列化/反序列化</span>
-          <span class="card-desc">JSON 字符串与对象互转，支持转义处理</span>
+          <span class="card-title" data-i18n="card.json-convert.title">JSON 序列化/反序列化</span>
+          <span class="card-desc" data-i18n="card.json-convert.desc">JSON 字符串与对象互转，支持转义处理</span>
+        </a>
+        <a href="#json-diff" class="tool-card" data-nav="json-diff">
+          <span class="card-icon blue">≠</span>
+          <span class="card-title" data-i18n="card.json-diff.title">JSON 内容比对</span>
+          <span class="card-desc" data-i18n="card.json-diff.desc">对比两段 JSON，标记差异并支持结构化对齐</span>
         </a>
         <a href="#base64-image" class="tool-card" data-nav="base64-image">
           <span class="card-icon green">🖼</span>
-          <span class="card-title">Base64 图片生成</span>
-          <span class="card-desc">将图片文件转换为 Base64 Data URI 字符串</span>
+          <span class="card-title" data-i18n="card.base64-image.title">Base64 图片生成</span>
+          <span class="card-desc" data-i18n="card.base64-image.desc">将图片文件转换为 Base64 Data URI 字符串</span>
         </a>
         <a href="#base64-decode-img" class="tool-card" data-nav="base64-decode-img">
           <span class="card-icon green">📥</span>
-          <span class="card-title">Base64 逆向图片</span>
-          <span class="card-desc">将 Base64 字符串还原为图片并支持下载</span>
+          <span class="card-title" data-i18n="card.base64-decode-img.title">Base64 逆向图片</span>
+          <span class="card-desc" data-i18n="card.base64-decode-img.desc">将 Base64 字符串还原为图片并支持下载</span>
         </a>
         <a href="#qrcode-gen" class="tool-card" data-nav="qrcode-gen">
           <span class="card-icon purple">▣</span>
-          <span class="card-title">二维码生成</span>
-          <span class="card-desc">将文本或链接生成二维码图片，支持自定义尺寸</span>
+          <span class="card-title" data-i18n="card.qrcode-gen.title">二维码生成</span>
+          <span class="card-desc" data-i18n="card.qrcode-gen.desc">将文本或链接生成二维码图片，支持自定义尺寸</span>
         </a>
         <a href="#qrcode-decode" class="tool-card" data-nav="qrcode-decode">
           <span class="card-icon purple">⊡</span>
-          <span class="card-title">二维码解码</span>
-          <span class="card-desc">从上传的二维码图片中解析出文本内容</span>
+          <span class="card-title" data-i18n="card.qrcode-decode.title">二维码解码</span>
+          <span class="card-desc" data-i18n="card.qrcode-decode.desc">从上传的二维码图片中解析出文本内容</span>
         </a>
         <a href="#url-encode" class="tool-card" data-nav="url-encode">
           <span class="card-icon cyan">🔗</span>
-          <span class="card-title">URL 编码/解码</span>
-          <span class="card-desc">URL encodeURIComponent 与 decodeURIComponent</span>
+          <span class="card-title" data-i18n="card.url-encode.title">URL 编码/解码</span>
+          <span class="card-desc" data-i18n="card.url-encode.desc">URL encodeURIComponent 与 decodeURIComponent</span>
         </a>
         <a href="#html-entity" class="tool-card" data-nav="html-entity">
           <span class="card-icon cyan">&lt;&gt;</span>
-          <span class="card-title">HTML 实体编解码</span>
-          <span class="card-desc">HTML 特殊字符与实体编码互转</span>
+          <span class="card-title" data-i18n="card.html-entity.title">HTML 实体编解码</span>
+          <span class="card-desc" data-i18n="card.html-entity.desc">HTML 特殊字符与实体编码互转</span>
         </a>
         <a href="#unicode" class="tool-card" data-nav="unicode">
           <span class="card-icon cyan">⎇</span>
-          <span class="card-title">Unicode 编解码</span>
-          <span class="card-desc">字符串与 Unicode 转义序列互转</span>
+          <span class="card-title" data-i18n="card.unicode.title">Unicode 编解码</span>
+          <span class="card-desc" data-i18n="card.unicode.desc">字符串与 Unicode 转义序列互转</span>
         </a>
         <a href="#uuid-gen" class="tool-card" data-nav="uuid-gen">
           <span class="card-icon orange">#</span>
-          <span class="card-title">UUID 生成器</span>
-          <span class="card-desc">生成 UUID v4 随机标识符，支持批量生成</span>
+          <span class="card-title" data-i18n="card.uuid-gen.title">UUID 生成器</span>
+          <span class="card-desc" data-i18n="card.uuid-gen.desc">生成 UUID v4 随机标识符，支持批量生成</span>
         </a>
         <a href="#hash-gen" class="tool-card" data-nav="hash-gen">
           <span class="card-icon orange">🔐</span>
-          <span class="card-title">Hash 生成器</span>
-          <span class="card-desc">MD5, SHA-1, SHA-256, SHA-512 哈希计算</span>
+          <span class="card-title" data-i18n="card.hash-gen.title">Hash 生成器</span>
+          <span class="card-desc" data-i18n="card.hash-gen.desc">MD5, SHA-1, SHA-256, SHA-512 哈希计算</span>
         </a>
         <a href="#password-gen" class="tool-card" data-nav="password-gen">
           <span class="card-icon orange">🔑</span>
-          <span class="card-title">随机密码生成</span>
-          <span class="card-desc">生成指定长度和字符集的强随机密码</span>
+          <span class="card-title" data-i18n="card.password-gen.title">随机密码生成</span>
+          <span class="card-desc" data-i18n="card.password-gen.desc">生成指定长度和字符集的强随机密码</span>
         </a>
         <a href="#regex-tester" class="tool-card" data-nav="regex-tester">
           <span class="card-icon pink">.*</span>
-          <span class="card-title">正则测试器</span>
-          <span class="card-desc">在线测试正则表达式，高亮匹配结果</span>
+          <span class="card-title" data-i18n="card.regex-tester.title">正则测试器</span>
+          <span class="card-desc" data-i18n="card.regex-tester.desc">在线测试正则表达式，高亮匹配结果</span>
         </a>
         <a href="#text-diff" class="tool-card" data-nav="text-diff">
           <span class="card-icon pink">≅</span>
-          <span class="card-title">文本差异对比</span>
-          <span class="card-desc">对比两段文本的差异，可视化显示增删内容</span>
+          <span class="card-title" data-i18n="card.text-diff.title">文本差异对比</span>
+          <span class="card-desc" data-i18n="card.text-diff.desc">对比两段文本的差异，可视化显示增删内容</span>
         </a>
         <a href="#markdown" class="tool-card" data-nav="markdown">
           <span class="card-icon pink">M↓</span>
-          <span class="card-title">Markdown 预览</span>
-          <span class="card-desc">实时预览 Markdown 渲染效果</span>
+          <span class="card-title" data-i18n="card.markdown.title">Markdown 预览</span>
+          <span class="card-desc" data-i18n="card.markdown.desc">实时预览 Markdown 渲染效果</span>
         </a>
         <a href="#case-convert" class="tool-card" data-nav="case-convert">
           <span class="card-icon pink">Aa</span>
-          <span class="card-title">大小写转换</span>
-          <span class="card-desc">camelCase, snake_case, kebab-case 等格式互转</span>
+          <span class="card-title" data-i18n="card.case-convert.title">大小写转换</span>
+          <span class="card-desc" data-i18n="card.case-convert.desc">camelCase, snake_case, kebab-case 等格式互转</span>
         </a>
         <a href="#timestamp" class="tool-card" data-nav="timestamp">
           <span class="card-icon red">⏱</span>
-          <span class="card-title">时间戳转换</span>
-          <span class="card-desc">Unix 时间戳与日期时间互转</span>
+          <span class="card-title" data-i18n="card.timestamp.title">时间戳转换</span>
+          <span class="card-desc" data-i18n="card.timestamp.desc">Unix 时间戳与日期时间互转</span>
         </a>
         <a href="#color" class="tool-card" data-nav="color">
           <span class="card-icon red">🎨</span>
-          <span class="card-title">颜色转换</span>
-          <span class="card-desc">HEX / RGB / HSL 颜色格式互转</span>
+          <span class="card-title" data-i18n="card.color.title">颜色转换</span>
+          <span class="card-desc" data-i18n="card.color.desc">HEX / RGB / HSL 颜色格式互转</span>
         </a>
         <a href="#number-base" class="tool-card" data-nav="number-base">
           <span class="card-icon red">0x</span>
-          <span class="card-title">进制转换</span>
-          <span class="card-desc">二进制、八进制、十进制、十六进制互转</span>
+          <span class="card-title" data-i18n="card.number-base.title">进制转换</span>
+          <span class="card-desc" data-i18n="card.number-base.desc">二进制、八进制、十进制、十六进制互转</span>
         </a>
         <a href="#jwt-decode" class="tool-card" data-nav="jwt-decode">
           <span class="card-icon red">◈</span>
-          <span class="card-title">JWT 解码</span>
-          <span class="card-desc">解析 JWT Token 的 Header 和 Payload</span>
+          <span class="card-title" data-i18n="card.jwt-decode.title">JWT 解码</span>
+          <span class="card-desc" data-i18n="card.jwt-decode.desc">解析 JWT Token 的 Header 和 Payload</span>
         </a>
         <a href="#yaml-json" class="tool-card" data-nav="yaml-json">
           <span class="card-icon blue">Y↔</span>
-          <span class="card-title">YAML / JSON 互转</span>
-          <span class="card-desc">YAML 与 JSON 格式互相转换，支持多文档</span>
+          <span class="card-title" data-i18n="card.yaml-json.title">YAML / JSON 互转</span>
+          <span class="card-desc" data-i18n="card.yaml-json.desc">YAML 与 JSON 格式互相转换，支持多文档</span>
         </a>
         <a href="#xml-json" class="tool-card" data-nav="xml-json">
           <span class="card-icon blue">X↔</span>
-          <span class="card-title">XML / JSON 互转</span>
-          <span class="card-desc">XML 与 JSON 互相转换，自动处理属性</span>
+          <span class="card-title" data-i18n="card.xml-json.title">XML / JSON 互转</span>
+          <span class="card-desc" data-i18n="card.xml-json.desc">XML 与 JSON 互相转换，自动处理属性</span>
         </a>
         <a href="#sql-format" class="tool-card" data-nav="sql-format">
           <span class="card-icon blue">⚙</span>
-          <span class="card-title">SQL 格式化</span>
-          <span class="card-desc">美化和压缩 SQL 语句，支持多种方言</span>
+          <span class="card-title" data-i18n="card.sql-format.title">SQL 格式化</span>
+          <span class="card-desc" data-i18n="card.sql-format.desc">美化和压缩 SQL 语句，支持多种方言</span>
         </a>
         <a href="#base64-text" class="tool-card" data-nav="base64-text">
           <span class="card-icon green">B64</span>
-          <span class="card-title">Base64 文本编解码</span>
-          <span class="card-desc">字符串与 Base64 互转，UTF-8 安全</span>
+          <span class="card-title" data-i18n="card.base64-text.title">Base64 文本编解码</span>
+          <span class="card-desc" data-i18n="card.base64-text.desc">字符串与 Base64 互转，UTF-8 安全</span>
         </a>
         <a href="#aes-crypt" class="tool-card" data-nav="aes-crypt">
           <span class="card-icon cyan">🛡</span>
-          <span class="card-title">AES 加密 / 解密</span>
-          <span class="card-desc">AES-256 对称加密解密，支持自定义密钥</span>
+          <span class="card-title" data-i18n="card.aes-crypt.title">AES 加密 / 解密</span>
+          <span class="card-desc" data-i18n="card.aes-crypt.desc">AES-256 对称加密解密，支持自定义密钥</span>
         </a>
         <a href="#lorem-gen" class="tool-card" data-nav="lorem-gen">
           <span class="card-icon orange">¶</span>
-          <span class="card-title">Lorem 占位文本</span>
-          <span class="card-desc">生成 Lorem Ipsum 占位文本，可选段落数量</span>
+          <span class="card-title" data-i18n="card.lorem-gen.title">Lorem 占位文本</span>
+          <span class="card-desc" data-i18n="card.lorem-gen.desc">生成 Lorem Ipsum 占位文本，可选段落数量</span>
         </a>
         <a href="#text-stats" class="tool-card" data-nav="text-stats">
           <span class="card-icon pink">∑</span>
-          <span class="card-title">文本统计</span>
-          <span class="card-desc">字符数、词数、行数、字节大小、阅读时长</span>
+          <span class="card-title" data-i18n="card.text-stats.title">文本统计</span>
+          <span class="card-desc" data-i18n="card.text-stats.desc">字符数、词数、行数、字节大小、阅读时长</span>
         </a>
         <a href="#cron-parse" class="tool-card" data-nav="cron-parse">
           <span class="card-icon red">⏲</span>
-          <span class="card-title">Cron 表达式解析</span>
-          <span class="card-desc">解析 Cron 表达式并预览未来执行时间</span>
+          <span class="card-title" data-i18n="card.cron-parse.title">Cron 表达式解析</span>
+          <span class="card-desc" data-i18n="card.cron-parse.desc">解析 Cron 表达式并预览未来执行时间</span>
         </a>
         <a href="#css-gradient" class="tool-card" data-nav="css-gradient">
           <span class="card-icon purple">▥</span>
-          <span class="card-title">CSS 渐变生成</span>
-          <span class="card-desc">可视化生成线性/径向渐变，导出 CSS 代码</span>
+          <span class="card-title" data-i18n="card.css-gradient.title">CSS 渐变生成</span>
+          <span class="card-desc" data-i18n="card.css-gradient.desc">可视化生成线性/径向渐变，导出 CSS 代码</span>
         </a>
         <a href="#http-status" class="tool-card" data-nav="http-status">
           <span class="card-icon cyan">⚑</span>
-          <span class="card-title">HTTP 状态码</span>
-          <span class="card-desc">查询 HTTP 状态码含义、用途和典型场景</span>
+          <span class="card-title" data-i18n="card.http-status.title">HTTP 状态码</span>
+          <span class="card-desc" data-i18n="card.http-status.desc">查询 HTTP 状态码含义、用途和典型场景</span>
         </a>
       </div>
     </section>
 
-    <!-- ========================================
-         JSON FORMATTER
-         ======================================== -->
+    <!-- JSON FORMATTER -->
     <section class="tool-section" id="json-formatter">
       <div class="tool-header">
-        <h1>JSON 格式化</h1>
-        <p class="tool-desc">格式化、压缩或验证 JSON 数据</p>
+        <h1 data-i18n="jf.title">JSON 格式化</h1>
+        <p class="tool-desc" data-i18n="jf.desc">格式化、压缩或验证 JSON 数据</p>
       </div>
       <div class="form-group">
-        <label class="form-label">输入 JSON 字符串</label>
+        <label class="form-label" data-i18n="jf.label.input">输入 JSON 字符串</label>
         <textarea id="jsonInput" class="large" placeholder='{"name":"DevTools","version":1.0,"features":["json","base64","qrcode"]}'></textarea>
       </div>
       <div class="btn-group">
-        <button class="btn btn-primary" id="jsonFormat">格式化</button>
-        <button class="btn btn-secondary" id="jsonCompress">压缩</button>
-        <button class="btn btn-secondary" id="jsonValidate">验证</button>
-        <button class="btn btn-secondary" id="jsonClear">清空</button>
+        <button class="btn btn-primary" id="jsonFormat" data-i18n="jf.btn.format">格式化</button>
+        <button class="btn btn-secondary" id="jsonCompress" data-i18n="jf.btn.compress">压缩</button>
+        <button class="btn btn-secondary" id="jsonValidate" data-i18n="jf.btn.validate">验证</button>
+        <button class="btn btn-secondary" id="jsonClear" data-i18n="common.clear">清空</button>
       </div>
       <div class="result-header" style="margin-top:16px;">
-        <span class="form-label" style="margin:0;">输出结果</span>
-        <button class="btn btn-sm btn-secondary" id="jsonCopy">复制</button>
+        <span class="form-label" style="margin:0;" data-i18n="jf.label.output">输出结果</span>
+        <button class="btn btn-sm btn-secondary" id="jsonCopy" data-i18n="common.copy">复制</button>
       </div>
-      <div class="result-area empty" id="jsonOutput">等待输入...</div>
+      <div class="result-area empty" id="jsonOutput" data-i18n="common.waiting">等待输入...</div>
       <div class="stats-bar" id="jsonStats" style="display:none;"></div>
     </section>
 
-    <!-- ========================================
-         JSON CONVERT (Serialize/Deserialize)
-         ======================================== -->
+    <!-- JSON CONVERT -->
     <section class="tool-section" id="json-convert">
       <div class="tool-header">
-        <h1>JSON 序列化 / 反序列化</h1>
-        <p class="tool-desc">对象与 JSON 字符串互转，支持多层转义</p>
+        <h1 data-i18n="jc.title">JSON 序列化 / 反序列化</h1>
+        <p class="tool-desc" data-i18n="jc.desc">对象与 JSON 字符串互转，支持多层转义</p>
       </div>
       <div class="tool-grid">
         <div>
           <div class="form-group">
-            <label class="form-label">JavaScript 对象</label>
+            <label class="form-label" data-i18n="jc.label.obj">JavaScript 对象</label>
             <textarea id="jsonObjInput" style="min-height:200px;" placeholder='{name: "hello", items: [1, 2, 3]}'></textarea>
           </div>
           <div class="btn-group">
-            <button class="btn btn-primary" id="jsonSerialize">序列化 (Stringify)</button>
-            <button class="btn btn-secondary" id="jsonEscape">转义 JSON 字符串</button>
+            <button class="btn btn-primary" id="jsonSerialize" data-i18n="jc.btn.serialize">序列化 (Stringify)</button>
+            <button class="btn btn-secondary" id="jsonEscape" data-i18n="jc.btn.escape">转义 JSON 字符串</button>
           </div>
         </div>
         <div>
           <div class="form-group">
-            <label class="form-label">JSON 字符串</label>
+            <label class="form-label" data-i18n="jc.label.str">JSON 字符串</label>
             <textarea id="jsonStrInput" style="min-height:200px;" placeholder='{"name":"hello","items":[1,2,3]}'></textarea>
           </div>
           <div class="btn-group">
-            <button class="btn btn-primary" id="jsonDeserialize">反序列化 (Parse)</button>
-            <button class="btn btn-secondary" id="jsonUnescape">反转义 JSON 字符串</button>
+            <button class="btn btn-primary" id="jsonDeserialize" data-i18n="jc.btn.deserialize">反序列化 (Parse)</button>
+            <button class="btn btn-secondary" id="jsonUnescape" data-i18n="jc.btn.unescape">反转义 JSON 字符串</button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ========================================
-         BASE64 IMAGE GENERATOR
-         ======================================== -->
-    <section class="tool-section" id="base64-image">
+    <!-- JSON DIFF -->
+    <section class="tool-section" id="json-diff">
       <div class="tool-header">
-        <h1>Base64 图片生成</h1>
-        <p class="tool-desc">将图片文件转换为 Base64 编码的 Data URI 字符串，可直接嵌入 HTML/CSS</p>
+        <h1 data-i18n="jd.title">JSON 内容比对</h1>
+        <p class="tool-desc" data-i18n="jd.desc">对比两段 JSON 内容，标记新增、删除、修改的字段</p>
+      </div>
+      <div class="tool-grid">
+        <div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="jd.label.left">左侧 JSON (原始)</label>
+            <textarea id="jdLeft" style="min-height:240px;font-family:var(--font-mono);" data-i18n-placeholder="jd.placeholder.left" placeholder='{"name":"DevTools","version":1,"features":["json","base64"]}'></textarea>
+          </div>
+        </div>
+        <div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="jd.label.right">右侧 JSON (新)</label>
+            <textarea id="jdRight" style="min-height:240px;font-family:var(--font-mono);" data-i18n-placeholder="jd.placeholder.right" placeholder='{"name":"DevTools","version":2,"features":["json","base64","qrcode"],"author":"team"}'></textarea>
+          </div>
+        </div>
       </div>
       <div class="form-group">
-        <label class="form-label">选择图片文件</label>
+        <label class="form-label" data-i18n="jd.label.mode">对比模式</label>
+        <div class="btn-group" style="margin-top:0;flex-wrap:wrap;">
+          <button class="btn btn-secondary jd-mode active" data-mode="structural" data-i18n="jd.mode.structural">结构化对比</button>
+          <button class="btn btn-secondary jd-mode" data-mode="line" data-i18n="jd.mode.line">逐行对比</button>
+        </div>
+      </div>
+      <div class="form-group" id="jdOptionsGroup">
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-secondary);">
+          <input type="checkbox" id="jdSortKeys" checked> <span data-i18n="jd.opt.sortKeys">忽略键顺序（按键名排序后对比）</span>
+        </label>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" id="jdCompare" data-i18n="jd.btn.compare">对比差异</button>
+        <button class="btn btn-secondary" id="jdSwap" data-i18n="jd.btn.swap">交换两侧</button>
+        <button class="btn btn-secondary" id="jdClear" data-i18n="common.clear">清空</button>
+      </div>
+      <div id="jdError" style="color:var(--accent-red);margin-top:8px;display:none;"></div>
+      <div class="result-header" style="margin-top:16px;">
+        <span class="form-label" style="margin:0;" data-i18n="jd.label.result">差异结果</span>
+        <span id="jdSummary" class="jd-summary" style="display:none;"></span>
+      </div>
+      <div class="result-area empty" id="jdOutput" style="font-family:var(--font-mono);" data-i18n="jd.placeholder.result">输入两段 JSON 后点击"对比差异"...</div>
+    </section>
+
+    <!-- BASE64 IMAGE -->
+    <section class="tool-section" id="base64-image">
+      <div class="tool-header">
+        <h1 data-i18n="b64i.title">Base64 图片生成</h1>
+        <p class="tool-desc" data-i18n="b64i.desc">将图片文件转换为 Base64 编码的 Data URI 字符串，可直接嵌入 HTML/CSS</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="b64i.label.choose">选择图片文件</label>
         <input type="file" id="base64FileInput" accept="image/*">
       </div>
       <div class="preview-box" id="base64Preview">
-        <span style="color:var(--text-tertiary);">图片预览区域</span>
+        <span style="color:var(--text-tertiary);" data-i18n="b64i.preview">图片预览区域</span>
       </div>
       <div class="form-group" style="margin-top:16px;">
-        <label class="form-label">Base64 Data URI</label>
-        <textarea id="base64Output" style="min-height:120px;" readonly placeholder="选择图片后自动生成..."></textarea>
+        <label class="form-label" data-i18n="b64i.label.output">Base64 Data URI</label>
+        <textarea id="base64Output" style="min-height:120px;" readonly data-i18n-placeholder="b64i.placeholder.output" placeholder="选择图片后自动生成..."></textarea>
       </div>
       <div class="btn-group">
-        <button class="btn btn-secondary" id="base64Copy">复制 Base64</button>
-        <button class="btn btn-secondary" id="base64Download">下载为 .txt</button>
+        <button class="btn btn-secondary" id="base64Copy" data-i18n="b64i.btn.copy">复制 Base64</button>
+        <button class="btn btn-secondary" id="base64Download" data-i18n="b64i.btn.download">下载为 .txt</button>
       </div>
     </section>
 
-    <!-- ========================================
-         BASE64 DECODE TO IMAGE
-         ======================================== -->
+    <!-- BASE64 DECODE -->
     <section class="tool-section" id="base64-decode-img">
       <div class="tool-header">
-        <h1>Base64 逆向图片</h1>
-        <p class="tool-desc">将 Base64 字符串还原为图片，支持预览和下载</p>
+        <h1 data-i18n="b64d.title">Base64 逆向图片</h1>
+        <p class="tool-desc" data-i18n="b64d.desc">将 Base64 字符串还原为图片，支持预览和下载</p>
       </div>
       <div class="form-group">
-        <label class="form-label">粘贴 Base64 字符串（支持 data:image 前缀或纯 Base64）</label>
-        <textarea id="base64DecodeInput" class="large" placeholder="data:image/png;base64,iVBORw0KGgo... 或纯 Base64 字符串"></textarea>
+        <label class="form-label" data-i18n="b64d.label.input">粘贴 Base64 字符串（支持 data:image 前缀或纯 Base64）</label>
+        <textarea id="base64DecodeInput" class="large" data-i18n-placeholder="b64d.placeholder.input" placeholder="data:image/png;base64,iVBORw0KGgo... 或纯 Base64 字符串"></textarea>
       </div>
       <div class="btn-group">
-        <button class="btn btn-primary" id="base64DecodeBtn">还原图片</button>
-        <button class="btn btn-secondary" id="base64DecodeClear">清空</button>
+        <button class="btn btn-primary" id="base64DecodeBtn" data-i18n="b64d.btn.decode">还原图片</button>
+        <button class="btn btn-secondary" id="base64DecodeClear" data-i18n="common.clear">清空</button>
       </div>
       <div class="preview-box" id="base64DecodePreview" style="margin-top:16px;">
-        <span style="color:var(--text-tertiary);">还原后的图片将显示在此处</span>
+        <span style="color:var(--text-tertiary);" data-i18n="b64d.preview">还原后的图片将显示在此处</span>
       </div>
       <div class="btn-group" id="base64DecodeImgActions" style="display:none;">
-        <button class="btn btn-secondary" id="base64DecodeDownload">下载图片</button>
+        <button class="btn btn-secondary" id="base64DecodeDownload" data-i18n="b64d.btn.download">下载图片</button>
       </div>
       <div id="base64DecodeError" style="color:var(--accent-red);margin-top:8px;display:none;"></div>
     </section>
 
-    <!-- ========================================
-         QRCODE GENERATOR
-         ======================================== -->
+    <!-- QRCODE GEN -->
     <section class="tool-section" id="qrcode-gen">
       <div class="tool-header">
-        <h1>二维码生成</h1>
-        <p class="tool-desc">将文本或链接生成二维码，支持自定义尺寸和颜色</p>
+        <h1 data-i18n="qr.title">二维码生成</h1>
+        <p class="tool-desc" data-i18n="qr.desc">将文本或链接生成二维码，支持自定义尺寸和颜色</p>
       </div>
       <div class="tool-grid">
         <div>
           <div class="form-group">
-            <label class="form-label">文本 / 链接</label>
-            <textarea id="qrText" class="small" placeholder="输入文本或 URL...">https://www.example.com</textarea>
+            <label class="form-label" data-i18n="qr.label.text">文本 / 链接</label>
+            <textarea id="qrText" class="small" data-i18n-placeholder="qr.placeholder.text" placeholder="输入文本或 URL...">https://www.example.com</textarea>
           </div>
           <div class="form-group">
-            <label class="form-label">尺寸</label>
+            <label class="form-label" data-i18n="qr.label.size">尺寸</label>
             <div style="display:flex;align-items:center;gap:12px;">
               <input type="range" id="qrSize" min="128" max="512" value="256" step="8" style="flex:1;">
               <span id="qrSizeVal" style="font-size:13px;color:var(--text-secondary);min-width:40px;">256px</span>
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">颜色</label>
+            <label class="form-label" data-i18n="qr.label.color">颜色</label>
             <div style="display:flex;gap:12px;">
-              <div><span style="font-size:12px;color:var(--text-secondary);">前景</span><input type="color" id="qrFg" value="#000000"></div>
-              <div><span style="font-size:12px;color:var(--text-secondary);">背景</span><input type="color" id="qrBg" value="#ffffff"></div>
+              <div><span style="font-size:12px;color:var(--text-secondary);" data-i18n="qr.label.fg">前景</span><input type="color" id="qrFg" value="#000000"></div>
+              <div><span style="font-size:12px;color:var(--text-secondary);" data-i18n="qr.label.bg">背景</span><input type="color" id="qrBg" value="#ffffff"></div>
             </div>
           </div>
-          <button class="btn btn-primary" id="qrGenerate">生成二维码</button>
+          <button class="btn btn-primary" id="qrGenerate" data-i18n="qr.btn.generate">生成二维码</button>
         </div>
         <div>
           <div class="qrcode-container" id="qrContainer">
-            <span style="color:var(--text-tertiary);">二维码将显示在此处</span>
+            <span style="color:var(--text-tertiary);" data-i18n="qr.placeholder.preview">二维码将显示在此处</span>
           </div>
           <div class="btn-group" id="qrActions" style="display:none;justify-content:center;">
-            <button class="btn btn-secondary btn-sm" id="qrDownload">下载 PNG</button>
+            <button class="btn btn-secondary btn-sm" id="qrDownload" data-i18n="qr.btn.download">下载 PNG</button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ========================================
-         QRCODE DECODER
-         ======================================== -->
+    <!-- QRCODE DECODE -->
     <section class="tool-section" id="qrcode-decode">
       <div class="tool-header">
-        <h1>二维码解码</h1>
-        <p class="tool-desc">上传二维码图片，解析出其中的文本内容</p>
+        <h1 data-i18n="qrd.title">二维码解码</h1>
+        <p class="tool-desc" data-i18n="qrd.desc">上传二维码图片，解析出其中的文本内容</p>
       </div>
       <div class="tool-grid">
         <div>
           <div class="form-group">
-            <label class="form-label">上传二维码图片</label>
+            <label class="form-label" data-i18n="qrd.label.upload">上传二维码图片</label>
             <input type="file" id="qrDecodeFile" accept="image/*">
           </div>
           <div class="form-group">
-            <label class="form-label">或粘贴图片 URL</label>
+            <label class="form-label" data-i18n="qrd.label.url">或粘贴图片 URL</label>
             <input type="url" id="qrDecodeUrl" placeholder="https://example.com/qrcode.png">
-            <button class="btn btn-secondary btn-sm" id="qrDecodeUrlBtn" style="margin-top:8px;">从 URL 加载</button>
+            <button class="btn btn-secondary btn-sm" id="qrDecodeUrlBtn" style="margin-top:8px;" data-i18n="qrd.btn.loadUrl">从 URL 加载</button>
           </div>
         </div>
         <div>
           <div class="preview-box" id="qrDecodePreview">
-            <span style="color:var(--text-tertiary);">上传的二维码图片预览</span>
+            <span style="color:var(--text-tertiary);" data-i18n="qrd.placeholder.preview">上传的二维码图片预览</span>
           </div>
           <div class="form-group" style="margin-top:12px;">
-            <label class="form-label">解码结果</label>
-            <textarea id="qrDecodeResult" readonly placeholder="解码结果将显示在此处..." style="min-height:60px;"></textarea>
+            <label class="form-label" data-i18n="qrd.label.result">解码结果</label>
+            <textarea id="qrDecodeResult" readonly data-i18n-placeholder="qrd.placeholder.result" placeholder="解码结果将显示在此处..." style="min-height:60px;"></textarea>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ========================================
-         URL ENCODE / DECODE
-         ======================================== -->
+    <!-- URL ENCODE -->
     <section class="tool-section" id="url-encode">
       <div class="tool-header">
-        <h1>URL 编码 / 解码</h1>
-        <p class="tool-desc">对 URL 参数进行 encodeURIComponent 和 decodeURIComponent 操作</p>
+        <h1 data-i18n="url.title">URL 编码 / 解码</h1>
+        <p class="tool-desc" data-i18n="url.desc">对 URL 参数进行 encodeURIComponent 和 decodeURIComponent 操作</p>
       </div>
       <div class="tool-grid">
         <div>
           <div class="form-group">
-            <label class="form-label">原始文本</label>
-            <textarea id="urlRaw" style="min-height:180px;" placeholder="输入要编码的文本..."></textarea>
+            <label class="form-label" data-i18n="url.label.raw">原始文本</label>
+            <textarea id="urlRaw" style="min-height:180px;" data-i18n-placeholder="url.placeholder.raw" placeholder="输入要编码的文本..."></textarea>
           </div>
-          <button class="btn btn-primary" id="urlEncodeBtn">编码 →</button>
+          <button class="btn btn-primary" id="urlEncodeBtn" data-i18n="url.btn.encode">编码 →</button>
         </div>
         <div>
           <div class="form-group">
-            <label class="form-label">编码后文本</label>
-            <textarea id="urlEncoded" style="min-height:180px;" placeholder="输入要解码的 URL 编码文本..."></textarea>
+            <label class="form-label" data-i18n="url.label.encoded">编码后文本</label>
+            <textarea id="urlEncoded" style="min-height:180px;" data-i18n-placeholder="url.placeholder.encoded" placeholder="输入要解码的 URL 编码文本..."></textarea>
           </div>
-          <button class="btn btn-primary" id="urlDecodeBtn">← 解码</button>
+          <button class="btn btn-primary" id="urlDecodeBtn" data-i18n="url.btn.decode">← 解码</button>
         </div>
       </div>
     </section>
 
-    <!-- ========================================
-         HTML ENTITY ENCODE / DECODE
-         ======================================== -->
+    <!-- HTML ENTITY -->
     <section class="tool-section" id="html-entity">
       <div class="tool-header">
-        <h1>HTML 实体编解码</h1>
-        <p class="tool-desc">在 HTML 特殊字符（&lt; &gt; &amp; 等）与实体编码之间转换</p>
+        <h1 data-i18n="html.title">HTML 实体编解码</h1>
+        <p class="tool-desc" data-i18n="html.desc">在 HTML 特殊字符（&lt; &gt; &amp; 等）与实体编码之间转换</p>
       </div>
       <div class="tool-grid">
         <div>
           <div class="form-group">
-            <label class="form-label">原始文本</label>
+            <label class="form-label" data-i18n="html.label.raw">原始文本</label>
             <textarea id="htmlRaw" style="min-height:180px;" placeholder="<div class=&quot;test&quot;>Hello &amp; World</div>"></textarea>
           </div>
-          <button class="btn btn-primary" id="htmlEncodeBtn">编码 (转义) →</button>
+          <button class="btn btn-primary" id="htmlEncodeBtn" data-i18n="html.btn.encode">编码 (转义) →</button>
         </div>
         <div>
           <div class="form-group">
-            <label class="form-label">HTML 实体文本</label>
+            <label class="form-label" data-i18n="html.label.encoded">HTML 实体文本</label>
             <textarea id="htmlEncoded" style="min-height:180px;" placeholder="&lt;div class=&quot;test&quot;&gt;Hello &amp; World&lt;/div&gt;"></textarea>
           </div>
-          <button class="btn btn-primary" id="htmlDecodeBtn">← 解码 (反转义)</button>
+          <button class="btn btn-primary" id="htmlDecodeBtn" data-i18n="html.btn.decode">← 解码 (反转义)</button>
         </div>
       </div>
     </section>
 
-    <!-- ========================================
-         UNICODE ENCODE / DECODE
-         ======================================== -->
+    <!-- UNICODE -->
     <section class="tool-section" id="unicode">
       <div class="tool-header">
-        <h1>Unicode 编解码</h1>
-        <p class="tool-desc">字符串与 Unicode 转义序列（\uXXXX）互转，支持 emoji</p>
+        <h1 data-i18n="uni.title">Unicode 编解码</h1>
+        <p class="tool-desc" data-i18n="uni.desc">字符串与 Unicode 转义序列（\uXXXX）互转，支持 emoji</p>
       </div>
       <div class="tool-grid">
         <div>
           <div class="form-group">
-            <label class="form-label">原始文本</label>
+            <label class="form-label" data-i18n="uni.label.raw">原始文本</label>
             <textarea id="unicodeRaw" style="min-height:180px;" placeholder="你好世界 🎉"></textarea>
           </div>
-          <button class="btn btn-primary" id="unicodeEncodeBtn">编码 → (\uXXXX)</button>
+          <button class="btn btn-primary" id="unicodeEncodeBtn" data-i18n="uni.btn.encode">编码 → (\uXXXX)</button>
         </div>
         <div>
           <div class="form-group">
-            <label class="form-label">Unicode 转义序列</label>
+            <label class="form-label" data-i18n="uni.label.encoded">Unicode 转义序列</label>
             <textarea id="unicodeEncoded" style="min-height:180px;" placeholder="你好世界 🎉"></textarea>
           </div>
-          <button class="btn btn-primary" id="unicodeDecodeBtn">← 解码</button>
+          <button class="btn btn-primary" id="unicodeDecodeBtn" data-i18n="uni.btn.decode">← 解码</button>
         </div>
       </div>
     </section>
 
-    <!-- ========================================
-         UUID GENERATOR
-         ======================================== -->
+    <!-- UUID -->
     <section class="tool-section" id="uuid-gen">
       <div class="tool-header">
-        <h1>UUID 生成器</h1>
-        <p class="tool-desc">生成 UUID v4 随机标识符，支持批量生成多种格式</p>
+        <h1 data-i18n="uuid.title">UUID 生成器</h1>
+        <p class="tool-desc" data-i18n="uuid.desc">生成 UUID v4 随机标识符，支持批量生成多种格式</p>
       </div>
       <div class="form-group">
-        <label class="form-label">UUID 格式</label>
+        <label class="form-label" data-i18n="uuid.label.format">UUID 格式</label>
         <select id="uuidFormat">
-          <option value="standard">标准: 550e8400-e29b-41d4-a716-446655440000</option>
-          <option value="upper">大写: 550E8400-E29B-41D4-A716-446655440000</option>
-          <option value="compact">无横线: 550e8400e29b41d4a716446655440000</option>
+          <option value="standard" data-i18n="uuid.opt.standard">标准: 550e8400-e29b-41d4-a716-446655440000</option>
+          <option value="upper" data-i18n="uuid.opt.upper">大写: 550E8400-E29B-41D4-A716-446655440000</option>
+          <option value="compact" data-i18n="uuid.opt.compact">无横线: 550e8400e29b41d4a716446655440000</option>
         </select>
       </div>
       <div class="btn-group">
-        <button class="btn btn-primary" id="uuidGenerate">生成一个</button>
-        <button class="btn btn-secondary" id="uuidBatch10">批量生成10个</button>
-        <button class="btn btn-secondary" id="uuidCopy">复制</button>
+        <button class="btn btn-primary" id="uuidGenerate" data-i18n="uuid.btn.one">生成一个</button>
+        <button class="btn btn-secondary" id="uuidBatch10" data-i18n="uuid.btn.batch">批量生成10个</button>
+        <button class="btn btn-secondary" id="uuidCopy" data-i18n="common.copy">复制</button>
       </div>
       <div class="result-header" style="margin-top:16px;">
-        <span class="form-label" style="margin:0;">生成结果</span>
+        <span class="form-label" style="margin:0;" data-i18n="uuid.label.result">生成结果</span>
       </div>
-      <div class="result-area" id="uuidOutput" style="min-height:60px;">点击"生成"按钮...</div>
+      <div class="result-area" id="uuidOutput" style="min-height:60px;" data-i18n="uuid.placeholder.result">点击"生成"按钮...</div>
     </section>
 
-    <!-- ========================================
-         HASH GENERATOR
-         ======================================== -->
+    <!-- HASH -->
     <section class="tool-section" id="hash-gen">
       <div class="tool-header">
-        <h1>Hash 生成器</h1>
-        <p class="tool-desc">计算文本的 MD5、SHA-1、SHA-256、SHA-512 哈希值</p>
+        <h1 data-i18n="hash.title">Hash 生成器</h1>
+        <p class="tool-desc" data-i18n="hash.desc">计算文本的 MD5、SHA-1、SHA-256、SHA-512 哈希值</p>
       </div>
       <div class="form-group">
-        <label class="form-label">输入文本</label>
-        <textarea id="hashInput" class="small" placeholder="输入要计算哈希的文本..."></textarea>
+        <label class="form-label" data-i18n="hash.label.input">输入文本</label>
+        <textarea id="hashInput" class="small" data-i18n-placeholder="hash.placeholder.input" placeholder="输入要计算哈希的文本..."></textarea>
       </div>
       <div class="form-group">
-        <label class="form-label">算法</label>
+        <label class="form-label" data-i18n="hash.label.algo">算法</label>
         <div class="btn-group" style="margin-top:0;">
           <button class="btn btn-secondary hash-algo active" data-algo="MD5">MD5</button>
           <button class="btn btn-secondary hash-algo" data-algo="SHA-1">SHA-1</button>
@@ -605,373 +637,347 @@
         </div>
       </div>
       <div class="result-header">
-        <span class="form-label" style="margin:0;">哈希结果 (<span id="hashAlgoLabel">MD5</span>)</span>
-        <button class="btn btn-sm btn-secondary" id="hashCopy">复制</button>
+        <span class="form-label" style="margin:0;"><span data-i18n="hash.label.result">哈希结果</span> (<span id="hashAlgoLabel">MD5</span>)</span>
+        <button class="btn btn-sm btn-secondary" id="hashCopy" data-i18n="common.copy">复制</button>
       </div>
-      <div class="result-area" id="hashOutput" style="word-break:break-all;">等待输入...</div>
+      <div class="result-area" id="hashOutput" style="word-break:break-all;" data-i18n="common.waiting">等待输入...</div>
     </section>
 
-    <!-- ========================================
-         PASSWORD GENERATOR
-         ======================================== -->
+    <!-- PASSWORD GEN -->
     <section class="tool-section" id="password-gen">
       <div class="tool-header">
-        <h1>随机密码生成</h1>
-        <p class="tool-desc">生成指定长度和字符集的强随机密码</p>
-      </div>
-      <div class="tool-grid">
-        <div>
-          <div class="form-group">
-            <label class="form-label">密码长度</label>
-            <div style="display:flex;align-items:center;gap:12px;">
-              <input type="range" id="pwdLen" min="8" max="64" value="16" step="1" style="flex:1;">
-              <span id="pwdLenVal" style="font-size:14px;font-weight:600;min-width:30px;">16</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">字符集</label>
-            <div style="display:flex;flex-direction:column;gap:6px;">
-              <label class="checkbox-row"><input type="checkbox" id="pwdLower" checked> 小写字母 (a-z)</label>
-              <label class="checkbox-row"><input type="checkbox" id="pwdUpper" checked> 大写字母 (A-Z)</label>
-              <label class="checkbox-row"><input type="checkbox" id="pwdDigits" checked> 数字 (0-9)</label>
-              <label class="checkbox-row"><input type="checkbox" id="pwdSymbols"> 符号 (!@#$%^&*)</label>
-            </div>
-          </div>
-          <div class="btn-group">
-            <button class="btn btn-primary" id="pwdGenerate">生成密码</button>
-            <button class="btn btn-secondary" id="pwdCopy">复制</button>
-          </div>
-        </div>
-        <div>
-          <div class="form-group">
-            <label class="form-label">生成的密码</label>
-            <input type="text" id="pwdOutput" readonly placeholder="点击生成..." style="font-size:18px;letter-spacing:1px;text-align:center;">
-          </div>
-          <div class="stats-bar" id="pwdStrength"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================
-         REGEX TESTER
-         ======================================== -->
-    <section class="tool-section" id="regex-tester">
-      <div class="tool-header">
-        <h1>正则表达式测试器</h1>
-        <p class="tool-desc">在线测试正则表达式，实时高亮匹配结果</p>
+        <h1 data-i18n="pwd.title">随机密码生成</h1>
+        <p class="tool-desc" data-i18n="pwd.desc">生成指定长度和字符集的强随机密码</p>
       </div>
       <div class="form-group">
-        <label class="form-label">正则表达式</label>
+        <label class="form-label" data-i18n="pwd.label.length">密码长度</label>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <input type="range" id="pwdLen" min="4" max="64" value="16" style="flex:1;">
+          <span id="pwdLenVal" style="font-size:13px;color:var(--text-secondary);min-width:32px;">16</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="pwd.label.charset">字符集</label>
+        <div style="display:flex;flex-wrap:wrap;gap:14px;">
+          <label style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="pwdLower" checked> <span data-i18n="pwd.cs.lower">小写字母 (a-z)</span></label>
+          <label style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="pwdUpper" checked> <span data-i18n="pwd.cs.upper">大写字母 (A-Z)</span></label>
+          <label style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="pwdDigits" checked> <span data-i18n="pwd.cs.digits">数字 (0-9)</span></label>
+          <label style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="pwdSymbols"> <span data-i18n="pwd.cs.symbols">符号 (!@#$%^&amp;*)</span></label>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" id="pwdGenerate" data-i18n="pwd.btn.generate">生成密码</button>
+        <button class="btn btn-secondary" id="pwdCopy" data-i18n="common.copy">复制</button>
+      </div>
+      <div class="form-group" style="margin-top:16px;">
+        <label class="form-label" data-i18n="pwd.label.result">生成的密码</label>
+        <textarea id="pwdOutput" readonly data-i18n-placeholder="pwd.placeholder.result" placeholder="点击生成..." style="min-height:60px;font-family:var(--font-mono);"></textarea>
+      </div>
+      <div class="stats-bar" id="pwdStrength"></div>
+    </section>
+
+    <!-- REGEX TESTER -->
+    <section class="tool-section" id="regex-tester">
+      <div class="tool-header">
+        <h1 data-i18n="rx.title">正则表达式测试器</h1>
+        <p class="tool-desc" data-i18n="rx.desc">在线测试正则表达式，实时高亮匹配结果</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="rx.label.pattern">正则表达式</label>
         <div style="display:flex;gap:8px;">
-          <input type="text" id="regexPattern" placeholder="/pattern/flags 或直接输入正则" style="font-family:var(--font-mono);flex:1;">
-          <select id="regexFlags" style="width:120px;">
-            <option value="">无标志</option>
-            <option value="g">g - 全局</option>
-            <option value="gi">gi - 全局+忽略大小写</option>
-            <option value="gm">gm - 全局+多行</option>
-            <option value="gim">gim - 全局+忽略大小写+多行</option>
-            <option value="i">i - 忽略大小写</option>
-            <option value="m">m - 多行</option>
+          <input type="text" id="regexPattern" data-i18n-placeholder="rx.placeholder.pattern" placeholder="/pattern/flags 或直接输入正则" style="flex:1;font-family:var(--font-mono);">
+          <select id="regexFlags" style="width:auto;min-width:140px;">
+            <option value="" data-i18n="rx.flag.none">无标志</option>
+            <option value="g" data-i18n="rx.flag.g">g - 全局</option>
+            <option value="gi" selected data-i18n="rx.flag.gi">gi - 全局+忽略大小写</option>
+            <option value="gm" data-i18n="rx.flag.gm">gm - 全局+多行</option>
+            <option value="gim" data-i18n="rx.flag.gim">gim - 全局+忽略大小写+多行</option>
+            <option value="i" data-i18n="rx.flag.i">i - 忽略大小写</option>
+            <option value="m" data-i18n="rx.flag.m">m - 多行</option>
           </select>
         </div>
       </div>
       <div class="form-group">
-        <label class="form-label">测试文本</label>
-        <textarea id="regexText" class="large" placeholder="输入要测试的文本..."></textarea>
+        <label class="form-label" data-i18n="rx.label.text">测试文本</label>
+        <textarea id="regexText" class="large" data-i18n-placeholder="rx.placeholder.text" placeholder="输入要测试的文本..."></textarea>
       </div>
       <div class="result-header">
-        <span class="form-label" style="margin:0;">匹配结果</span>
+        <span class="form-label" style="margin:0;" data-i18n="rx.label.result">匹配结果</span>
       </div>
-      <div class="result-area empty" id="regexResult">输入正则和文本后自动匹配...</div>
+      <div class="result-area empty" id="regexResult" data-i18n="rx.placeholder.result">输入正则和文本后自动匹配...</div>
     </section>
 
-    <!-- ========================================
-         TEXT DIFF
-         ======================================== -->
+    <!-- TEXT DIFF -->
     <section class="tool-section" id="text-diff">
       <div class="tool-header">
-        <h1>文本差异对比</h1>
-        <p class="tool-desc">逐行对比两段文本，高亮显示差异</p>
+        <h1 data-i18n="diff.title">文本差异对比</h1>
+        <p class="tool-desc" data-i18n="diff.desc">逐行对比两段文本，高亮显示差异</p>
       </div>
       <div class="tool-grid">
         <div>
           <div class="form-group">
-            <label class="form-label">原始文本</label>
-            <textarea id="diffOld" class="large" placeholder="输入原始文本..."></textarea>
+            <label class="form-label" data-i18n="diff.label.old">原始文本</label>
+            <textarea id="diffOld" style="min-height:200px;font-family:var(--font-mono);" data-i18n-placeholder="diff.placeholder.old" placeholder="输入原始文本..."></textarea>
           </div>
         </div>
         <div>
           <div class="form-group">
-            <label class="form-label">新文本</label>
-            <textarea id="diffNew" class="large" placeholder="输入新文本..."></textarea>
+            <label class="form-label" data-i18n="diff.label.new">新文本</label>
+            <textarea id="diffNew" style="min-height:200px;font-family:var(--font-mono);" data-i18n-placeholder="diff.placeholder.new" placeholder="输入新文本..."></textarea>
           </div>
         </div>
       </div>
-      <button class="btn btn-primary" id="diffCompare">对比差异</button>
+      <button class="btn btn-primary" id="diffCompare" data-i18n="diff.btn.compare">对比差异</button>
       <div class="result-header" style="margin-top:16px;">
-        <span class="form-label" style="margin:0;">差异结果</span>
+        <span class="form-label" style="margin:0;" data-i18n="diff.label.result">差异结果</span>
       </div>
-      <div class="result-area" id="diffOutput" style="min-height:100px;">点击"对比差异"查看结果...</div>
+      <div class="result-area empty" id="diffOutput" data-i18n="diff.placeholder.result">点击"对比差异"查看结果...</div>
     </section>
 
-    <!-- ========================================
-         MARKDOWN PREVIEW
-         ======================================== -->
+    <!-- MARKDOWN -->
     <section class="tool-section" id="markdown">
       <div class="tool-header">
-        <h1>Markdown 预览</h1>
-        <p class="tool-desc">实时预览 Markdown 渲染效果，支持 GitHub Flavored Markdown</p>
+        <h1 data-i18n="md.title">Markdown 预览</h1>
+        <p class="tool-desc" data-i18n="md.desc">实时预览 Markdown 渲染效果，支持 GitHub Flavored Markdown</p>
       </div>
       <div class="tool-grid">
         <div>
           <div class="form-group">
-            <label class="form-label">Markdown 源码</label>
-            <textarea id="mdInput" class="large" placeholder="# 标题
+            <label class="form-label" data-i18n="md.label.input">Markdown 源码</label>
+            <textarea id="mdInput" style="min-height:400px;font-family:var(--font-mono);"># Hello DevTools
 
-这是一段 **Markdown** 文本。
+## Markdown 预览
+
+支持 **加粗**、*斜体*、`代码`、[链接](https://example.com)。
 
 - 列表项 1
 - 列表项 2
+- 列表项 3
 
-```javascript
-console.log(&quot;Hello, World!&quot;);
-```"></textarea>
+```js
+console.log('Hello');
+```
+&gt; 引用区块
+
+| 表头 1 | 表头 2 |
+|--------|--------|
+| 内容 1 | 内容 2 |
+</textarea>
           </div>
-          <button class="btn btn-primary" id="mdRender">渲染预览</button>
+          <button class="btn btn-primary" id="mdRender" data-i18n="md.btn.render">渲染预览</button>
         </div>
         <div>
           <div class="form-group">
-            <label class="form-label">预览效果</label>
-          </div>
-          <div class="markdown-preview" id="mdPreview">
-            <span style="color:var(--text-tertiary);">点击"渲染预览"查看效果...</span>
+            <label class="form-label" data-i18n="md.label.preview">预览效果</label>
+            <div class="result-area empty" id="mdPreview" style="min-height:400px;overflow:auto;" data-i18n="md.placeholder.preview">点击"渲染预览"查看效果...</div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ========================================
-         CASE CONVERT
-         ======================================== -->
+    <!-- CASE CONVERT -->
     <section class="tool-section" id="case-convert">
       <div class="tool-header">
-        <h1>大小写转换</h1>
-        <p class="tool-desc">在 camelCase, snake_case, kebab-case, PascalCase 等格式间转换</p>
+        <h1 data-i18n="case.title">大小写转换</h1>
+        <p class="tool-desc" data-i18n="case.desc">在 camelCase, snake_case, kebab-case, PascalCase 等格式间转换</p>
       </div>
       <div class="form-group">
-        <label class="form-label">输入文本</label>
-        <textarea id="caseInput" class="small" placeholder="输入要转换的文本..."></textarea>
+        <label class="form-label" data-i18n="case.label.input">输入文本</label>
+        <textarea id="caseInput" class="small" data-i18n-placeholder="case.placeholder.input" placeholder="输入要转换的文本..."></textarea>
       </div>
       <div class="form-group">
-        <label class="form-label">转换格式</label>
-        <div class="btn-group" style="margin-top:0;">
-          <button class="btn btn-secondary case-algo active" data-case="upper">全大写</button>
-          <button class="btn btn-secondary case-algo" data-case="lower">全小写</button>
-          <button class="btn btn-secondary case-algo" data-case="title">首字母大写</button>
-          <button class="btn btn-secondary case-algo" data-case="camel">camelCase</button>
-          <button class="btn btn-secondary case-algo" data-case="pascal">PascalCase</button>
-          <button class="btn btn-secondary case-algo" data-case="snake">snake_case</button>
-          <button class="btn btn-secondary case-algo" data-case="kebab">kebab-case</button>
+        <label class="form-label" data-i18n="case.label.format">转换格式</label>
+        <div class="btn-group" style="margin-top:0;flex-wrap:wrap;">
+          <button class="btn btn-secondary case-algo active" data-case="upper" data-i18n="case.upper">全大写</button>
+          <button class="btn btn-secondary case-algo" data-case="lower" data-i18n="case.lower">全小写</button>
+          <button class="btn btn-secondary case-algo" data-case="title" data-i18n="case.title2">首字母大写</button>
+          <button class="btn btn-secondary case-algo" data-case="camel" data-i18n="case.camel">camelCase</button>
+          <button class="btn btn-secondary case-algo" data-case="pascal" data-i18n="case.pascal">PascalCase</button>
+          <button class="btn btn-secondary case-algo" data-case="snake" data-i18n="case.snake">snake_case</button>
+          <button class="btn btn-secondary case-algo" data-case="kebab" data-i18n="case.kebab">kebab-case</button>
         </div>
       </div>
       <div class="result-header">
-        <span class="form-label" style="margin:0;">转换结果</span>
-        <button class="btn btn-sm btn-secondary" id="caseCopy">复制</button>
+        <span class="form-label" style="margin:0;" data-i18n="case.label.result">转换结果</span>
+        <button class="btn btn-sm btn-secondary" id="caseCopy" data-i18n="common.copy">复制</button>
       </div>
-      <div class="result-area empty" id="caseOutput">等待输入...</div>
+      <div class="result-area empty" id="caseOutput" data-i18n="common.waiting">等待输入...</div>
     </section>
 
-    <!-- ========================================
-         TIMESTAMP CONVERTER
-         ======================================== -->
+    <!-- TIMESTAMP -->
     <section class="tool-section" id="timestamp">
       <div class="tool-header">
-        <h1>时间戳转换</h1>
-        <p class="tool-desc">Unix 时间戳（秒/毫秒）与日期时间互转</p>
+        <h1 data-i18n="ts.title">时间戳转换</h1>
+        <p class="tool-desc" data-i18n="ts.desc">Unix 时间戳（秒/毫秒）与日期时间互转</p>
       </div>
       <div class="tool-grid">
         <div>
           <div class="form-group">
-            <label class="form-label">Unix 时间戳 → 日期</label>
-            <input type="text" id="tsInput" placeholder="输入时间戳，如 1700000000 或 1700000000000">
-            <div class="btn-group">
-              <button class="btn btn-primary" id="tsConvert">转换为日期</button>
-              <button class="btn btn-secondary btn-sm" id="tsNow">当前时间戳</button>
-            </div>
+            <label class="form-label" data-i18n="ts.label.toDate">Unix 时间戳 → 日期</label>
+            <input type="text" id="tsInput" data-i18n-placeholder="ts.placeholder.ts" placeholder="输入时间戳，如 1700000000 或 1700000000000">
           </div>
-          <div class="result-area" id="tsResult" style="min-height:60px;">等待输入...</div>
+          <div class="btn-group">
+            <button class="btn btn-primary" id="tsConvert" data-i18n="ts.btn.toDate">转换为日期</button>
+            <button class="btn btn-secondary" id="tsNow" data-i18n="ts.btn.now">当前时间戳</button>
+          </div>
+          <div class="result-area" id="tsResult" style="min-height:120px;margin-top:12px;" data-i18n="common.waiting">等待输入...</div>
         </div>
         <div>
           <div class="form-group">
-            <label class="form-label">日期 → Unix 时间戳</label>
-            <input type="text" id="tsDateInput" placeholder="如 2024-01-01 12:00:00">
-            <button class="btn btn-primary" id="tsDateConvert" style="margin-top:8px;">转换为时间戳</button>
+            <label class="form-label" data-i18n="ts.label.toTs">日期 → Unix 时间戳</label>
+            <input type="text" id="tsDateInput" data-i18n-placeholder="ts.placeholder.date" placeholder="如 2024-01-01 12:00:00">
           </div>
-          <div class="result-area" id="tsDateResult" style="min-height:60px;">等待输入...</div>
+          <div class="btn-group">
+            <button class="btn btn-primary" id="tsDateConvert" data-i18n="ts.btn.toTs">转换为时间戳</button>
+          </div>
+          <div class="result-area" id="tsDateResult" style="min-height:120px;margin-top:12px;" data-i18n="common.waiting">等待输入...</div>
         </div>
       </div>
     </section>
 
-    <!-- ========================================
-         COLOR CONVERTER
-         ======================================== -->
+    <!-- COLOR -->
     <section class="tool-section" id="color">
       <div class="tool-header">
-        <h1>颜色转换</h1>
-        <p class="tool-desc">HEX / RGB / HSL 颜色格式互转，可视化预览</p>
+        <h1 data-i18n="color.title">颜色转换</h1>
+        <p class="tool-desc" data-i18n="color.desc">HEX / RGB / HSL 颜色格式互转，可视化预览</p>
       </div>
-      <div class="tool-grid">
+      <div class="form-group">
+        <label class="form-label" data-i18n="color.label.input">输入颜色值</label>
+        <input type="text" id="colorInput" data-i18n-placeholder="color.placeholder.input" placeholder="#58a6ff / rgb(88,166,255) / hsl(212,100%,67%)" value="#58a6ff">
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" id="colorConvert" data-i18n="color.btn.convert">转换</button>
+        <button class="btn btn-secondary" id="colorCopy" data-i18n="color.btn.copy">复制 HEX</button>
+      </div>
+      <div class="tool-grid" style="margin-top:16px;">
         <div>
-          <div class="form-group">
-            <label class="form-label">输入颜色值</label>
-            <input type="text" id="colorInput" placeholder="#58a6ff / rgb(88,166,255) / hsl(212,100%,67%)">
-          </div>
-          <div class="btn-group">
-            <button class="btn btn-primary" id="colorConvert">转换</button>
-            <button class="btn btn-secondary" id="colorCopy">复制 HEX</button>
-          </div>
-          <div class="result-area" id="colorResult" style="margin-top:12px;min-height:80px;">等待输入...</div>
-        </div>
-        <div>
-          <div class="color-row">
+          <div class="color-preview-card">
             <div class="color-swatch" id="colorSwatch" style="background:#58a6ff;"></div>
             <div>
-              <div style="font-weight:600;" id="colorHexLabel">#58a6ff</div>
-              <div style="font-size:13px;color:var(--text-secondary);" id="colorRgbLabel">rgb(88, 166, 255)</div>
-              <div style="font-size:13px;color:var(--text-secondary);" id="colorHslLabel">hsl(212, 100%, 67%)</div>
+              <div><strong>HEX:</strong> <span id="colorHexLabel">#58a6ff</span></div>
+              <div><strong>RGB:</strong> <span id="colorRgbLabel">rgb(88, 166, 255)</span></div>
+              <div><strong>HSL:</strong> <span id="colorHslLabel">hsl(212, 100%, 67%)</span></div>
             </div>
           </div>
           <div class="form-group" style="margin-top:12px;">
-            <label class="form-label">调色板</label>
-            <input type="color" id="colorPicker" value="#58a6ff" style="width:100%;height:40px;">
+            <label class="form-label" data-i18n="color.label.palette">调色板</label>
+            <input type="color" id="colorPicker" value="#58a6ff" style="width:80px;height:40px;padding:0;border-radius:6px;">
           </div>
+        </div>
+        <div>
+          <div class="result-area" id="colorResult" style="min-height:160px;"></div>
         </div>
       </div>
     </section>
 
-    <!-- ========================================
-         NUMBER BASE CONVERTER
-         ======================================== -->
+    <!-- NUMBER BASE -->
     <section class="tool-section" id="number-base">
       <div class="tool-header">
-        <h1>进制转换</h1>
-        <p class="tool-desc">二进制、八进制、十进制、十六进制互转</p>
-      </div>
-      <div class="tool-grid">
-        <div>
-          <div class="form-group">
-            <label class="form-label">输入数字</label>
-            <input type="text" id="numInput" placeholder="输入数字，如 255">
-          </div>
-          <div class="form-group">
-            <label class="form-label">输入进制</label>
-            <select id="numFromBase">
-              <option value="2">二进制 (Base 2)</option>
-              <option value="8">八进制 (Base 8)</option>
-              <option value="10" selected>十进制 (Base 10)</option>
-              <option value="16">十六进制 (Base 16)</option>
-            </select>
-          </div>
-          <button class="btn btn-primary" id="numConvert">转换</button>
-        </div>
-        <div>
-          <div class="result-area" id="numResult" style="min-height:200px;">等待输入...</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================
-         JWT DECODER
-         ======================================== -->
-    <section class="tool-section" id="jwt-decode">
-      <div class="tool-header">
-        <h1>JWT 解码</h1>
-        <p class="tool-desc">解析 JWT Token 的 Header 和 Payload，不验证签名</p>
+        <h1 data-i18n="nb.title">进制转换</h1>
+        <p class="tool-desc" data-i18n="nb.desc">二进制、八进制、十进制、十六进制互转</p>
       </div>
       <div class="form-group">
-        <label class="form-label">JWT Token</label>
-        <textarea id="jwtInput" class="small" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIn0..."></textarea>
+        <label class="form-label" data-i18n="nb.label.input">输入数字</label>
+        <input type="text" id="numInput" data-i18n-placeholder="nb.placeholder.input" placeholder="输入数字，如 255" value="255">
       </div>
-      <button class="btn btn-primary" id="jwtDecode">解码</button>
-      <div class="jwt-parts" id="jwtParts" style="margin-top:16px;"></div>
-      <div id="jwtError" style="color:var(--accent-red);margin-top:8px;display:none;"></div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="nb.label.from">输入进制</label>
+        <select id="numFromBase">
+          <option value="2" data-i18n="nb.from.2">二进制 (Base 2)</option>
+          <option value="8" data-i18n="nb.from.8">八进制 (Base 8)</option>
+          <option value="10" selected data-i18n="nb.from.10">十进制 (Base 10)</option>
+          <option value="16" data-i18n="nb.from.16">十六进制 (Base 16)</option>
+        </select>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" id="numConvert" data-i18n="nb.btn.convert">转换</button>
+      </div>
+      <div class="result-area" id="numResult" style="min-height:120px;margin-top:16px;" data-i18n="common.waiting">等待输入...</div>
     </section>
 
-    <!-- ========================================
-         YAML / JSON CONVERTER
-         ======================================== -->
+    <!-- JWT DECODE -->
+    <section class="tool-section" id="jwt-decode">
+      <div class="tool-header">
+        <h1 data-i18n="jwt.title">JWT 解码</h1>
+        <p class="tool-desc" data-i18n="jwt.desc">解析 JWT Token 的 Header 和 Payload，不验证签名</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="jwt.label.input">JWT Token</label>
+        <textarea id="jwtInput" class="small" placeholder="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRldlRvb2xzIn0.signature" style="font-family:var(--font-mono);"></textarea>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" id="jwtDecode" data-i18n="jwt.btn.decode">解码</button>
+      </div>
+      <div id="jwtError" style="color:var(--accent-red);margin-top:8px;display:none;"></div>
+      <div id="jwtParts" style="margin-top:16px;"></div>
+    </section>
+
+    <!-- YAML / JSON -->
     <section class="tool-section" id="yaml-json">
       <div class="tool-header">
-        <h1>YAML / JSON 互转</h1>
-        <p class="tool-desc">在 YAML 与 JSON 格式之间互相转换</p>
+        <h1 data-i18n="yj.title">YAML / JSON 互转</h1>
+        <p class="tool-desc" data-i18n="yj.desc">在 YAML 与 JSON 格式之间互相转换</p>
       </div>
       <div class="tool-grid">
         <div>
           <div class="form-group">
-            <label class="form-label">YAML</label>
-            <textarea id="yamlInput" class="large" placeholder="name: DevTools
+            <label class="form-label" data-i18n="yj.label.yaml">YAML</label>
+            <textarea id="yamlInput" style="min-height:280px;font-family:var(--font-mono);">name: DevTools
 version: 1.0
 features:
   - json
-  - yaml
-  - xml"></textarea>
+  - base64
+  - qrcode</textarea>
           </div>
-          <button class="btn btn-primary" id="yamlToJson">YAML → JSON</button>
+          <button class="btn btn-primary" id="yamlToJson" data-i18n="yj.btn.toJson">YAML → JSON</button>
         </div>
         <div>
           <div class="form-group">
-            <label class="form-label">JSON</label>
-            <textarea id="yamlJsonInput" class="large" placeholder='{"name":"DevTools","version":1.0}'></textarea>
+            <label class="form-label" data-i18n="yj.label.json">JSON</label>
+            <textarea id="yamlJsonInput" style="min-height:280px;font-family:var(--font-mono);"></textarea>
           </div>
-          <button class="btn btn-primary" id="jsonToYaml">JSON → YAML</button>
+          <button class="btn btn-primary" id="jsonToYaml" data-i18n="yj.btn.toYaml">JSON → YAML</button>
         </div>
       </div>
       <div id="yamlError" style="color:var(--accent-red);margin-top:8px;display:none;"></div>
     </section>
 
-    <!-- ========================================
-         XML / JSON CONVERTER
-         ======================================== -->
+    <!-- XML / JSON -->
     <section class="tool-section" id="xml-json">
       <div class="tool-header">
-        <h1>XML / JSON 互转</h1>
-        <p class="tool-desc">在 XML 与 JSON 之间互相转换，自动处理属性和文本节点</p>
+        <h1 data-i18n="xj.title">XML / JSON 互转</h1>
+        <p class="tool-desc" data-i18n="xj.desc">在 XML 与 JSON 之间互相转换，自动处理属性和文本节点</p>
       </div>
       <div class="tool-grid">
         <div>
           <div class="form-group">
-            <label class="form-label">XML</label>
-            <textarea id="xmlInput" class="large" placeholder='<root>
-  <name>DevTools</name>
-  <items>
-    <item id="1">json</item>
-    <item id="2">xml</item>
-  </items>
-</root>'></textarea>
+            <label class="form-label" data-i18n="xj.label.xml">XML</label>
+            <textarea id="xmlInput" style="min-height:280px;font-family:var(--font-mono);">&lt;root&gt;
+  &lt;item id="1"&gt;Hello&lt;/item&gt;
+  &lt;item id="2"&gt;World&lt;/item&gt;
+&lt;/root&gt;</textarea>
           </div>
-          <button class="btn btn-primary" id="xmlToJson">XML → JSON</button>
+          <button class="btn btn-primary" id="xmlToJson" data-i18n="xj.btn.toJson">XML → JSON</button>
         </div>
         <div>
           <div class="form-group">
-            <label class="form-label">JSON</label>
-            <textarea id="xmlJsonInput" class="large" placeholder='{"root":{"name":"DevTools"}}'></textarea>
+            <label class="form-label" data-i18n="xj.label.json">JSON</label>
+            <textarea id="xmlJsonInput" style="min-height:280px;font-family:var(--font-mono);"></textarea>
           </div>
-          <button class="btn btn-primary" id="jsonToXml">JSON → XML</button>
+          <button class="btn btn-primary" id="jsonToXml" data-i18n="xj.btn.toXml">JSON → XML</button>
         </div>
       </div>
       <div id="xmlError" style="color:var(--accent-red);margin-top:8px;display:none;"></div>
     </section>
 
-    <!-- ========================================
-         SQL FORMATTER
-         ======================================== -->
+    <!-- SQL FORMAT -->
     <section class="tool-section" id="sql-format">
       <div class="tool-header">
-        <h1>SQL 格式化</h1>
-        <p class="tool-desc">美化或压缩 SQL 语句，支持多种数据库方言</p>
+        <h1 data-i18n="sql.title">SQL 格式化</h1>
+        <p class="tool-desc" data-i18n="sql.desc">美化或压缩 SQL 语句，支持多种数据库方言</p>
       </div>
       <div class="form-group">
-        <label class="form-label">SQL 方言</label>
+        <label class="form-label" data-i18n="sql.label.dialect">SQL 方言</label>
         <select id="sqlDialect">
           <option value="sql">Standard SQL</option>
           <option value="mysql">MySQL</option>
@@ -979,258 +985,246 @@ features:
           <option value="sqlite">SQLite</option>
           <option value="mariadb">MariaDB</option>
           <option value="bigquery">BigQuery</option>
+          <option value="redshift">Redshift</option>
+          <option value="snowflake">Snowflake</option>
           <option value="tsql">T-SQL (SQL Server)</option>
-          <option value="plsql">Oracle PL/SQL</option>
+          <option value="plsql">PL/SQL (Oracle)</option>
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">SQL 输入</label>
-        <textarea id="sqlInput" class="large" placeholder="SELECT id, name, email FROM users WHERE status = 'active' AND created_at > '2024-01-01' ORDER BY id DESC LIMIT 10;"></textarea>
+        <label class="form-label" data-i18n="sql.label.input">SQL 输入</label>
+        <textarea id="sqlInput" class="large" style="font-family:var(--font-mono);">select id,name,email from users where age>18 and status='active' order by created_at desc limit 10</textarea>
       </div>
       <div class="btn-group">
-        <button class="btn btn-primary" id="sqlFormatBtn">格式化</button>
-        <button class="btn btn-secondary" id="sqlCompressBtn">压缩</button>
-        <button class="btn btn-secondary" id="sqlCopy">复制</button>
+        <button class="btn btn-primary" id="sqlFormatBtn" data-i18n="sql.btn.format">格式化</button>
+        <button class="btn btn-secondary" id="sqlCompressBtn" data-i18n="sql.btn.compress">压缩</button>
+        <button class="btn btn-secondary" id="sqlCopy" data-i18n="common.copy">复制</button>
       </div>
       <div class="result-header" style="margin-top:16px;">
-        <span class="form-label" style="margin:0;">输出结果</span>
+        <span class="form-label" style="margin:0;" data-i18n="sql.label.output">输出结果</span>
       </div>
-      <div class="result-area empty" id="sqlOutput">等待输入...</div>
+      <div class="result-area empty" id="sqlOutput" style="font-family:var(--font-mono);" data-i18n="common.waiting">等待输入...</div>
     </section>
 
-    <!-- ========================================
-         BASE64 TEXT
-         ======================================== -->
+    <!-- BASE64 TEXT -->
     <section class="tool-section" id="base64-text">
       <div class="tool-header">
-        <h1>Base64 文本编解码</h1>
-        <p class="tool-desc">字符串与 Base64 互转，使用 UTF-8 编码处理中文及 emoji</p>
+        <h1 data-i18n="b64t.title">Base64 文本编解码</h1>
+        <p class="tool-desc" data-i18n="b64t.desc">字符串与 Base64 互转，使用 UTF-8 编码处理中文及 emoji</p>
       </div>
       <div class="tool-grid">
         <div>
           <div class="form-group">
-            <label class="form-label">原始文本</label>
-            <textarea id="b64TextRaw" style="min-height:200px;" placeholder="Hello 世界 🎉"></textarea>
+            <label class="form-label" data-i18n="b64t.label.raw">原始文本</label>
+            <textarea id="b64TextRaw" style="min-height:200px;" placeholder="Hello 世界 🌍"></textarea>
           </div>
-          <button class="btn btn-primary" id="b64TextEncode">编码 (Encode) →</button>
+          <button class="btn btn-primary" id="b64TextEncode" data-i18n="b64t.btn.encode">编码 (Encode) →</button>
         </div>
         <div>
           <div class="form-group">
-            <label class="form-label">Base64 字符串</label>
-            <textarea id="b64TextEnc" style="min-height:200px;" placeholder="SGVsbG8g5LiW55WMIPCfjok="></textarea>
+            <label class="form-label" data-i18n="b64t.label.encoded">Base64 字符串</label>
+            <textarea id="b64TextEnc" style="min-height:200px;font-family:var(--font-mono);"></textarea>
           </div>
-          <button class="btn btn-primary" id="b64TextDecode">← 解码 (Decode)</button>
+          <button class="btn btn-primary" id="b64TextDecode" data-i18n="b64t.btn.decode">← 解码 (Decode)</button>
         </div>
       </div>
       <div id="b64TextError" style="color:var(--accent-red);margin-top:8px;display:none;"></div>
     </section>
 
-    <!-- ========================================
-         AES CRYPT
-         ======================================== -->
+    <!-- AES CRYPT -->
     <section class="tool-section" id="aes-crypt">
       <div class="tool-header">
-        <h1>AES 加密 / 解密</h1>
-        <p class="tool-desc">基于 CryptoJS 的 AES 对称加密，使用密码短语派生密钥</p>
+        <h1 data-i18n="aes.title">AES 加密 / 解密</h1>
+        <p class="tool-desc" data-i18n="aes.desc">基于 CryptoJS 的 AES 对称加密，使用密码短语派生密钥</p>
       </div>
       <div class="form-group">
-        <label class="form-label">密钥 / 密码短语</label>
-        <input type="text" id="aesKey" placeholder="输入加密密钥...">
+        <label class="form-label" data-i18n="aes.label.key">密钥 / 密码短语</label>
+        <input type="text" id="aesKey" data-i18n-placeholder="aes.placeholder.key" placeholder="输入加密密钥...">
       </div>
       <div class="form-group">
-        <label class="form-label">模式</label>
+        <label class="form-label" data-i18n="aes.label.mode">模式</label>
         <select id="aesMode">
-          <option value="CBC">AES-CBC（默认）</option>
-          <option value="ECB">AES-ECB</option>
+          <option value="CBC" data-i18n="aes.mode.cbc">AES-CBC（默认）</option>
+          <option value="ECB" data-i18n="aes.mode.ecb">AES-ECB</option>
         </select>
       </div>
       <div class="tool-grid">
         <div>
           <div class="form-group">
-            <label class="form-label">明文</label>
-            <textarea id="aesPlain" style="min-height:180px;" placeholder="输入要加密的文本..."></textarea>
+            <label class="form-label" data-i18n="aes.label.plain">明文</label>
+            <textarea id="aesPlain" style="min-height:180px;" data-i18n-placeholder="aes.placeholder.plain" placeholder="输入要加密的文本..."></textarea>
           </div>
-          <button class="btn btn-primary" id="aesEncryptBtn">加密 →</button>
+          <button class="btn btn-primary" id="aesEncryptBtn" data-i18n="aes.btn.encrypt">加密 →</button>
         </div>
         <div>
           <div class="form-group">
-            <label class="form-label">密文 (Base64)</label>
-            <textarea id="aesCipher" style="min-height:180px;" placeholder="U2FsdGVkX1+..."></textarea>
+            <label class="form-label" data-i18n="aes.label.cipher">密文 (Base64)</label>
+            <textarea id="aesCipher" style="min-height:180px;font-family:var(--font-mono);"></textarea>
           </div>
-          <button class="btn btn-primary" id="aesDecryptBtn">← 解密</button>
+          <button class="btn btn-primary" id="aesDecryptBtn" data-i18n="aes.btn.decrypt">← 解密</button>
         </div>
       </div>
       <div id="aesError" style="color:var(--accent-red);margin-top:8px;display:none;"></div>
     </section>
 
-    <!-- ========================================
-         LOREM GENERATOR
-         ======================================== -->
+    <!-- LOREM IPSUM -->
     <section class="tool-section" id="lorem-gen">
       <div class="tool-header">
-        <h1>Lorem Ipsum 占位文本</h1>
-        <p class="tool-desc">生成 Lorem Ipsum 风格占位文本，可选英文或中文</p>
+        <h1 data-i18n="lorem.title">Lorem Ipsum 占位文本</h1>
+        <p class="tool-desc" data-i18n="lorem.desc">生成 Lorem Ipsum 风格占位文本，可选英文或中文</p>
       </div>
-      <div class="tool-grid">
-        <div>
-          <div class="form-group">
-            <label class="form-label">语言</label>
-            <select id="loremLang">
-              <option value="latin">Latin (Lorem Ipsum)</option>
-              <option value="zh">中文乱数假文</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">类型</label>
-            <select id="loremType">
-              <option value="paragraphs">段落</option>
-              <option value="sentences">句子</option>
-              <option value="words">单词</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">数量</label>
-            <input type="number" id="loremCount" value="3" min="1" max="100">
-          </div>
-          <div class="form-group">
-            <label class="checkbox-row"><input type="checkbox" id="loremStartLorem" checked> 以 "Lorem ipsum dolor sit amet" 开头</label>
-          </div>
-          <div class="btn-group">
-            <button class="btn btn-primary" id="loremGenerateBtn">生成</button>
-            <button class="btn btn-secondary" id="loremCopy">复制</button>
-          </div>
+      <div style="display:flex;flex-wrap:wrap;gap:16px;">
+        <div class="form-group" style="flex:1;min-width:160px;">
+          <label class="form-label" data-i18n="lorem.label.lang">语言</label>
+          <select id="loremLang">
+            <option value="latin" data-i18n="lorem.lang.latin">Latin (Lorem Ipsum)</option>
+            <option value="zh" data-i18n="lorem.lang.zh">中文乱数假文</option>
+          </select>
         </div>
-        <div>
-          <div class="form-group">
-            <label class="form-label">生成结果</label>
-          </div>
-          <div class="result-area empty" id="loremOutput" style="min-height:300px;">点击"生成"按钮...</div>
+        <div class="form-group" style="flex:1;min-width:160px;">
+          <label class="form-label" data-i18n="lorem.label.type">类型</label>
+          <select id="loremType">
+            <option value="paragraphs" data-i18n="lorem.type.paragraphs">段落</option>
+            <option value="sentences" data-i18n="lorem.type.sentences">句子</option>
+            <option value="words" data-i18n="lorem.type.words">单词</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex:1;min-width:120px;">
+          <label class="form-label" data-i18n="lorem.label.count">数量</label>
+          <input type="number" id="loremCount" min="1" max="100" value="3">
         </div>
       </div>
-    </section>
-
-    <!-- ========================================
-         TEXT STATS
-         ======================================== -->
-    <section class="tool-section" id="text-stats">
-      <div class="tool-header">
-        <h1>文本统计</h1>
-        <p class="tool-desc">实时统计字符数、词数、行数、段落数、字节大小及预估阅读时长</p>
-      </div>
       <div class="form-group">
-        <label class="form-label">输入文本</label>
-        <textarea id="statsInput" class="large" placeholder="在此输入或粘贴文本..."></textarea>
-      </div>
-      <div class="stats-grid" id="statsResult">
-        <div class="stat-card"><div class="stat-label">字符数 (含空格)</div><div class="stat-value" id="statChars">0</div></div>
-        <div class="stat-card"><div class="stat-label">字符数 (不含空格)</div><div class="stat-value" id="statCharsNoSpace">0</div></div>
-        <div class="stat-card"><div class="stat-label">单词数</div><div class="stat-value" id="statWords">0</div></div>
-        <div class="stat-card"><div class="stat-label">行数</div><div class="stat-value" id="statLines">0</div></div>
-        <div class="stat-card"><div class="stat-label">段落数</div><div class="stat-value" id="statParas">0</div></div>
-        <div class="stat-card"><div class="stat-label">字节 (UTF-8)</div><div class="stat-value" id="statBytes">0</div></div>
-        <div class="stat-card"><div class="stat-label">中文字符</div><div class="stat-value" id="statCjk">0</div></div>
-        <div class="stat-card"><div class="stat-label">阅读时长</div><div class="stat-value" id="statReadTime">0 秒</div></div>
-      </div>
-    </section>
-
-    <!-- ========================================
-         CRON PARSER
-         ======================================== -->
-    <section class="tool-section" id="cron-parse">
-      <div class="tool-header">
-        <h1>Cron 表达式解析</h1>
-        <p class="tool-desc">解析标准 5 段 Cron 表达式（分 时 日 月 周），并预览未来执行时间</p>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Cron 表达式</label>
-        <input type="text" id="cronInput" placeholder="*/5 9-17 * * 1-5" value="*/5 9-17 * * 1-5">
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-secondary);">
+          <input type="checkbox" id="loremStartLorem" checked> <span data-i18n="lorem.opt.start">以 "Lorem ipsum dolor sit amet" 开头</span>
+        </label>
       </div>
       <div class="btn-group">
-        <button class="btn btn-primary" id="cronParseBtn">解析</button>
-        <button class="btn btn-secondary cron-preset" data-cron="* * * * *">每分钟</button>
-        <button class="btn btn-secondary cron-preset" data-cron="0 * * * *">每小时整点</button>
-        <button class="btn btn-secondary cron-preset" data-cron="0 0 * * *">每天零点</button>
-        <button class="btn btn-secondary cron-preset" data-cron="0 9 * * 1-5">工作日 9 点</button>
-        <button class="btn btn-secondary cron-preset" data-cron="0 0 1 * *">每月 1 号</button>
+        <button class="btn btn-primary" id="loremGenerateBtn" data-i18n="lorem.btn.generate">生成</button>
+        <button class="btn btn-secondary" id="loremCopy" data-i18n="common.copy">复制</button>
       </div>
       <div class="result-header" style="margin-top:16px;">
-        <span class="form-label" style="margin:0;">解析说明</span>
+        <span class="form-label" style="margin:0;" data-i18n="lorem.label.result">生成结果</span>
       </div>
-      <div class="result-area empty" id="cronExplain">输入 Cron 表达式...</div>
-      <div class="result-header" style="margin-top:16px;">
-        <span class="form-label" style="margin:0;">未来 10 次执行时间</span>
-      </div>
-      <div class="result-area empty" id="cronNext">解析后显示...</div>
+      <div class="result-area empty" id="loremOutput" style="white-space:pre-wrap;min-height:160px;" data-i18n="lorem.placeholder.result">点击"生成"按钮...</div>
     </section>
 
-    <!-- ========================================
-         CSS GRADIENT
-         ======================================== -->
+    <!-- TEXT STATS -->
+    <section class="tool-section" id="text-stats">
+      <div class="tool-header">
+        <h1 data-i18n="stats.title">文本统计</h1>
+        <p class="tool-desc" data-i18n="stats.desc">实时统计字符数、词数、行数、段落数、字节大小及预估阅读时长</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="stats.label.input">输入文本</label>
+        <textarea id="statsInput" class="large" data-i18n-placeholder="stats.placeholder.input" placeholder="在此输入或粘贴文本..."></textarea>
+      </div>
+      <div class="stats-grid">
+        <div class="stats-item"><div class="stats-label" data-i18n="stats.chars">字符数 (含空格)</div><div class="stats-value" id="statChars">0</div></div>
+        <div class="stats-item"><div class="stats-label" data-i18n="stats.charsNoSpace">字符数 (不含空格)</div><div class="stats-value" id="statCharsNoSpace">0</div></div>
+        <div class="stats-item"><div class="stats-label" data-i18n="stats.words">单词数</div><div class="stats-value" id="statWords">0</div></div>
+        <div class="stats-item"><div class="stats-label" data-i18n="stats.lines">行数</div><div class="stats-value" id="statLines">0</div></div>
+        <div class="stats-item"><div class="stats-label" data-i18n="stats.paras">段落数</div><div class="stats-value" id="statParas">0</div></div>
+        <div class="stats-item"><div class="stats-label" data-i18n="stats.bytes">字节 (UTF-8)</div><div class="stats-value" id="statBytes">0</div></div>
+        <div class="stats-item"><div class="stats-label" data-i18n="stats.cjk">中文字符</div><div class="stats-value" id="statCjk">0</div></div>
+        <div class="stats-item"><div class="stats-label" data-i18n="stats.readTime">阅读时长</div><div class="stats-value" id="statReadTime">0 秒</div></div>
+      </div>
+    </section>
+
+    <!-- CRON PARSE -->
+    <section class="tool-section" id="cron-parse">
+      <div class="tool-header">
+        <h1 data-i18n="cron.title">Cron 表达式解析</h1>
+        <p class="tool-desc" data-i18n="cron.desc">解析标准 5 段 Cron 表达式（分 时 日 月 周），并预览未来执行时间</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="cron.label.expr">Cron 表达式</label>
+        <input type="text" id="cronInput" placeholder="0 9 * * 1-5" value="*/5 * * * *" style="font-family:var(--font-mono);">
+      </div>
+      <div class="btn-group" style="flex-wrap:wrap;">
+        <button class="btn btn-primary" id="cronParseBtn" data-i18n="cron.btn.parse">解析</button>
+        <button class="btn btn-secondary cron-preset" data-cron="* * * * *" data-i18n="cron.preset.everyMin">每分钟</button>
+        <button class="btn btn-secondary cron-preset" data-cron="0 * * * *" data-i18n="cron.preset.hourly">每小时整点</button>
+        <button class="btn btn-secondary cron-preset" data-cron="0 0 * * *" data-i18n="cron.preset.daily">每天零点</button>
+        <button class="btn btn-secondary cron-preset" data-cron="0 9 * * 1-5" data-i18n="cron.preset.weekday9">工作日 9 点</button>
+        <button class="btn btn-secondary cron-preset" data-cron="0 0 1 * *" data-i18n="cron.preset.monthly">每月 1 号</button>
+      </div>
+      <div class="tool-grid" style="margin-top:16px;">
+        <div>
+          <div class="result-header"><span class="form-label" style="margin:0;" data-i18n="cron.label.explain">解析说明</span></div>
+          <div class="result-area" id="cronExplain" style="min-height:160px;" data-i18n="cron.placeholder.explain">输入 Cron 表达式...</div>
+        </div>
+        <div>
+          <div class="result-header"><span class="form-label" style="margin:0;" data-i18n="cron.label.next">未来 10 次执行时间</span></div>
+          <div class="result-area" id="cronNext" style="min-height:160px;font-family:var(--font-mono);" data-i18n="cron.placeholder.next">解析后显示...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CSS GRADIENT -->
     <section class="tool-section" id="css-gradient">
       <div class="tool-header">
-        <h1>CSS 渐变生成</h1>
-        <p class="tool-desc">可视化生成线性 / 径向渐变，导出 CSS 代码</p>
+        <h1 data-i18n="grad.title">CSS 渐变生成</h1>
+        <p class="tool-desc" data-i18n="grad.desc">可视化生成线性 / 径向渐变，导出 CSS 代码</p>
       </div>
       <div class="tool-grid">
         <div>
           <div class="form-group">
-            <label class="form-label">渐变类型</label>
+            <label class="form-label" data-i18n="grad.label.type">渐变类型</label>
             <select id="gradType">
-              <option value="linear">线性渐变 (linear-gradient)</option>
-              <option value="radial">径向渐变 (radial-gradient)</option>
+              <option value="linear" data-i18n="grad.type.linear">线性渐变 (linear-gradient)</option>
+              <option value="radial" data-i18n="grad.type.radial">径向渐变 (radial-gradient)</option>
             </select>
           </div>
           <div class="form-group" id="gradAngleGroup">
-            <label class="form-label">角度</label>
+            <label class="form-label" data-i18n="grad.label.angle">角度</label>
             <div style="display:flex;align-items:center;gap:12px;">
-              <input type="range" id="gradAngle" min="0" max="360" value="135" step="1" style="flex:1;">
-              <span id="gradAngleVal" style="font-size:13px;color:var(--text-secondary);min-width:50px;">135°</span>
+              <input type="range" id="gradAngle" min="0" max="360" value="135" style="flex:1;">
+              <span id="gradAngleVal" style="font-size:13px;color:var(--text-secondary);min-width:40px;">135°</span>
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">色标 (Color Stops)</label>
+            <label class="form-label" data-i18n="grad.label.stops">色标 (Color Stops)</label>
             <div id="gradStops"></div>
-            <button class="btn btn-secondary btn-sm" id="gradAddStop" style="margin-top:8px;">+ 添加色标</button>
+            <button class="btn btn-secondary btn-sm" id="gradAddStop" style="margin-top:8px;" data-i18n="grad.btn.add">+ 添加色标</button>
           </div>
         </div>
         <div>
           <div class="form-group">
-            <label class="form-label">预览</label>
-            <div id="gradPreview" class="gradient-preview"></div>
+            <label class="form-label" data-i18n="grad.label.preview">预览</label>
+            <div id="gradPreview" style="width:100%;height:220px;border-radius:8px;border:1px solid var(--border-primary);"></div>
           </div>
           <div class="form-group">
-            <label class="form-label">CSS 代码</label>
-            <textarea id="gradCss" readonly style="min-height:120px;"></textarea>
+            <label class="form-label" data-i18n="grad.label.css">CSS 代码</label>
+            <textarea id="gradCss" readonly style="min-height:80px;font-family:var(--font-mono);"></textarea>
           </div>
-          <button class="btn btn-secondary" id="gradCopy">复制 CSS</button>
+          <button class="btn btn-secondary" id="gradCopy" data-i18n="grad.btn.copy">复制 CSS</button>
         </div>
       </div>
     </section>
 
-    <!-- ========================================
-         HTTP STATUS
-         ======================================== -->
+    <!-- HTTP STATUS -->
     <section class="tool-section" id="http-status">
       <div class="tool-header">
-        <h1>HTTP 状态码速查</h1>
-        <p class="tool-desc">查询 HTTP 状态码的含义、用途和典型场景</p>
+        <h1 data-i18n="http.title">HTTP 状态码速查</h1>
+        <p class="tool-desc" data-i18n="http.desc">查询 HTTP 状态码的含义、用途和典型场景</p>
       </div>
       <div class="form-group">
-        <input type="text" id="httpSearch" placeholder="输入状态码或关键字（如 404、Not Found、redirect）...">
+        <input type="text" id="httpSearch" data-i18n-placeholder="http.placeholder.search" placeholder="输入状态码或关键字（如 404、Not Found、redirect）...">
       </div>
-      <div class="btn-group">
-        <button class="btn btn-secondary http-filter active" data-cat="all">全部</button>
-        <button class="btn btn-secondary http-filter" data-cat="1">1xx 信息</button>
-        <button class="btn btn-secondary http-filter" data-cat="2">2xx 成功</button>
-        <button class="btn btn-secondary http-filter" data-cat="3">3xx 重定向</button>
-        <button class="btn btn-secondary http-filter" data-cat="4">4xx 客户端错误</button>
-        <button class="btn btn-secondary http-filter" data-cat="5">5xx 服务端错误</button>
+      <div class="btn-group" style="flex-wrap:wrap;">
+        <button class="btn btn-secondary http-filter active" data-cat="all" data-i18n="http.filter.all">全部</button>
+        <button class="btn btn-secondary http-filter" data-cat="1" data-i18n="http.filter.1">1xx 信息</button>
+        <button class="btn btn-secondary http-filter" data-cat="2" data-i18n="http.filter.2">2xx 成功</button>
+        <button class="btn btn-secondary http-filter" data-cat="3" data-i18n="http.filter.3">3xx 重定向</button>
+        <button class="btn btn-secondary http-filter" data-cat="4" data-i18n="http.filter.4">4xx 客户端错误</button>
+        <button class="btn btn-secondary http-filter" data-cat="5" data-i18n="http.filter.5">5xx 服务端错误</button>
       </div>
-      <div class="http-list" id="httpList" style="margin-top:16px;"></div>
+      <div id="httpList" class="http-list" style="margin-top:16px;"></div>
     </section>
 
     <footer class="page-footer">
-      <span>开发者联系</span>
+      <span data-i18n="footer.contact">开发者联系</span>
       <a href="mailto:lixian.wslx@gmail.com">lixian.wslx@gmail.com</a>
     </footer>
 
@@ -1247,6 +1241,7 @@ features:
 <script src="https://cdn.jsdelivr.net/npm/sql-formatter@15.4.5/dist/sql-formatter.min.js"></script>
 
 <!-- App logic -->
+<script src="js/i18n.js"></script>
 <script src="js/app.js"></script>
 
 </body>
