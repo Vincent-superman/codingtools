@@ -240,6 +240,36 @@ body {
   justify-content: center;
 }
 
+/* Language toggle (top-right) */
+.lang-toggle {
+  position: fixed;
+  top: 12px; right: 16px;
+  z-index: 200;
+  height: 32px;
+  min-width: 44px;
+  padding: 0 12px;
+  border-radius: 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.lang-toggle:hover {
+  background: var(--bg-tertiary, var(--bg-secondary));
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+.lang-toggle:active {
+  transform: translateY(1px);
+}
+
 /* --- Main Content --- */
 .main {
   flex: 1;
@@ -732,6 +762,89 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 /* ============================================================
+   JSON Diff (structural compare)
+   ============================================================ */
+
+.jd-tree {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.jd-row {
+  padding: 1px 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  border-left: 3px solid transparent;
+}
+
+.jd-row .jd-marker {
+  display: inline-block;
+  width: 14px;
+  color: var(--text-tertiary);
+  text-align: center;
+  margin-right: 6px;
+  user-select: none;
+}
+
+.jd-row-added {
+  background: rgba(63, 185, 80, 0.12);
+  border-left-color: var(--accent-green);
+}
+.jd-row-added .jd-marker { color: var(--accent-green); font-weight: 700; }
+
+.jd-row-removed {
+  background: rgba(248, 81, 73, 0.12);
+  border-left-color: var(--accent-red);
+}
+.jd-row-removed .jd-marker { color: var(--accent-red); font-weight: 700; }
+
+.jd-tree .jd-key { color: var(--accent-blue); }
+.jd-tree .jd-index { color: var(--text-tertiary); }
+.jd-tree .json-string { color: var(--accent-orange); }
+.jd-tree .json-number { color: var(--accent-green); }
+.jd-tree .json-boolean { color: var(--accent-cyan); }
+.jd-tree .json-null { color: var(--text-tertiary); }
+
+.jd-summary {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.jd-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border-primary);
+  background: var(--bg-tertiary);
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  letter-spacing: 0.2px;
+}
+
+.jd-chip-added {
+  color: var(--accent-green);
+  border-color: rgba(63, 185, 80, 0.4);
+  background: rgba(63, 185, 80, 0.08);
+}
+.jd-chip-removed {
+  color: var(--accent-red);
+  border-color: rgba(248, 81, 73, 0.4);
+  background: rgba(248, 81, 73, 0.08);
+}
+.jd-chip-changed {
+  color: var(--accent-orange);
+  border-color: rgba(210, 153, 29, 0.4);
+  background: rgba(210, 153, 29, 0.08);
+}
+.jd-chip-unchanged {
+  color: var(--text-tertiary);
+}
+
+/* ============================================================
    JSON Tree View
    ============================================================ */
 
@@ -996,7 +1109,8 @@ input[type="range"]::-webkit-slider-thumb {
 .btn-secondary.active,
 .hash-algo.active,
 .case-algo.active,
-.http-filter.active {
+.http-filter.active,
+.jd-mode.active {
   background: var(--accent-subtle);
   color: var(--accent-blue);
   border-color: var(--accent-blue);
